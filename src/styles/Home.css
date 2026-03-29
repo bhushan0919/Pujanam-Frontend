@@ -1,0 +1,231 @@
+/* ===== Base Slider Styles ===== */
+.home-slider {
+    display: flex;
+    align-items: center;
+    position: relative;  /* Re-enabled for button positioning */
+    width: 100%;
+    height: 80vh;        /* subtract header height */
+    overflow: hidden;
+    border-radius: 30px;
+}
+
+.home-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* keeps aspect ratio, crops if needed */
+}
+
+.slider-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* keeps aspect ratio, crops nicely */
+}
+
+/* ===== Navigation Buttons ===== */
+.prev-btn,
+.next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 3rem;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    border-radius: 50%;
+    color: rgba(255, 215, 0, 0.7);
+    z-index: 10;
+    transition: color 0.3s ease;  /* Added smooth hover transition */
+}
+
+.prev-btn {
+    left: 20px;
+}
+
+.next-btn {
+    right: 20px;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+    color: #FFA500;
+}
+
+/* ===== Tablet Styles (max-width: 1024px) ===== */
+@media screen and (max-width: 1024px) {
+    .home-slider {
+        height: 70vh;
+        border-radius: 25px;
+    }
+    
+    .prev-btn,
+    .next-btn {
+        font-size: 2.5rem;
+        padding: 0.25rem 0.7rem;
+    }
+}
+
+/* ===== Mobile Landscape & Small Tablets (max-width: 768px) ===== */
+@media screen and (max-width: 768px) {
+    .home-slider {
+        height: 50vh;
+        border-radius: 15px;
+    }
+
+    .prev-btn,
+    .next-btn {
+        font-size: 2rem;
+        padding: 0.2rem 0.6rem;
+        top: 50%;        /* Keep at 50% for better positioning */
+        color: #FFD700;  /* Kept your exact color */
+        background: transparent;
+    }
+
+    .prev-btn {
+        left: 10px;
+    }
+    
+    .next-btn {
+        right: 10px;
+    }
+}
+
+/* ===== Mobile Portrait & Small Phones (max-width: 480px) ===== */
+@media screen and (max-width: 480px) {
+    .home-slider {
+        height: 35vh;
+        border-radius: 20px;
+    }
+
+    .prev-btn,
+    .next-btn {
+        font-size: 1.5rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .prev-btn {
+        left: 8px;
+    }
+    
+    .next-btn {
+        right: 8px;
+    }
+}
+
+/* ===== Extra Small Devices (max-width: 360px) ===== */
+@media screen and (max-width: 360px) {
+    .home-slider {
+        height: 30vh;
+        border-radius: 15px;
+    }
+    
+    .prev-btn,
+    .next-btn {
+        font-size: 1.2rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
+
+/* ===== Height-Based Media Queries for Better UX ===== */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    .home-slider {
+        height: 85vh;    /* Taller in landscape on small screens */
+    }
+}
+
+/* ===== Touch Device Optimization ===== */
+@media (hover: none) and (pointer: coarse) {
+    .prev-btn,
+    .next-btn {
+        padding: 0.5rem 1rem;  /* Larger touch target on mobile */
+        font-size: 2.5rem;      /* Larger buttons for touch */
+    }
+    
+    @media screen and (max-width: 480px) {
+        .prev-btn,
+        .next-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 2rem;
+        }
+    }
+}
+
+/* ===== High Resolution/Retina Displays ===== */
+@media screen and (-webkit-min-device-pixel-ratio: 2), 
+       screen and (min-resolution: 192dpi) {
+    .home-slider {
+        /* Maintains crisp images on retina displays */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ===== Optional: Loading State ===== */
+.home-slider.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== Optional: Image Counter ===== */
+.slider-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+    .slider-counter {
+        bottom: 10px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* ===== Optional: Dots Navigation ===== */
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.dot.active {
+    background: rgba(255, 215, 0, 0.7);  /* Matches your button color */
+}
+
+@media screen and (max-width: 768px) {
+    .slider-dots {
+        bottom: 10px;
+        gap: 8px;
+    }
+    
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+}

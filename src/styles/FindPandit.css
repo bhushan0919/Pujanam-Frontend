@@ -1,0 +1,724 @@
+/* ===== FindPandit.css ===== */
+/* ===== Base Styles & Variables ===== */
+:root {
+    --primary-color: #667eea;
+    --primary-dark: #5a6fd8;
+    --primary-darker: #4a5ac9;
+    --secondary-color: #007bff;
+    --secondary-dark: #0056b3;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-tertiary: #999;
+    --background-light: #f8f9fa;
+    --border-light: #ddd;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 20px rgba(102, 126, 234, 0.2);
+    --border-radius-sm: 6px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 10px;
+    --border-radius-xl: 15px;
+    --transition-default: all 0.3s ease;
+}
+
+/* ===== Main Container ===== */
+.find-pandit {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Filters Section ===== */
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filters input,
+.filters select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-default);
+    background: white;
+    color: var(--text-primary);
+    flex: 1;
+    min-width: 200px;
+}
+
+.filters input:focus,
+.filters select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.filters input:hover,
+.filters select:hover {
+    border-color: #cbd5e0;
+}
+
+/* ===== Debug Info Styling ===== */
+.debug-info {
+    background: #e3f2fd !important;
+    color: #1565c0 !important;
+    padding: 12px 15px !important;
+    border-radius: var(--border-radius-md) !important;
+    margin-bottom: 20px !important;
+    font-size: 14px !important;
+    border-left: 4px solid #2196f3 !important;
+    font-family: 'Courier New', monospace !important;
+    word-break: break-word;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ===== Pandit Grid ===== */
+.pandit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== Pandit Card ===== */
+.pandit-card {
+    background: #fff;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    text-align: center;
+    transition: var(--transition-default);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid transparent;
+}
+
+.pandit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-color);
+}
+
+/* Card Image */
+.pandit-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 15px;
+    display: block;
+    border: 3px solid white;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-default);
+}
+
+.pandit-card:hover img {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+}
+
+/* Card Typography */
+.pandit-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.pandit-card p {
+    margin: 8px 0;
+    color: var(--text-secondary);
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Specialization/Experience */
+.pandit-card p:first-of-type {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* Services Section */
+.pandit-card .services {
+    display: inline;
+    white-space: normal;
+    word-break: break-word;
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+}
+
+/* Rating Styling (if you add ratings later) */
+.pandit-card .rating {
+    color: #ffc107;
+    margin: 10px 0;
+    font-size: 1rem;
+}
+
+/* ===== Book Button ===== */
+.pandit-book-btn {
+    margin-top: auto;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+    border: none;
+    color: #fff;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--transition-default);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pandit-book-btn:hover {
+    background: linear-gradient(135deg, var(--secondary-dark), #004494);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.pandit-book-btn:active {
+    transform: translateY(0);
+}
+
+.pandit-book-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===== No Results Styling ===== */
+.no-results {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--text-secondary);
+    background: var(--background-light);
+    border-radius: var(--border-radius-lg);
+    margin: 20px 0;
+    grid-column: 1 / -1;
+    border: 2px dashed #dee2e6;
+}
+
+.no-results h3 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.no-results p {
+    font-size: 1.1rem;
+    color: var(--text-tertiary);
+}
+
+/* ===== Pagination ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    padding: 10px 25px;
+    border: 2px solid var(--primary-color);
+    background: white;
+    color: var(--primary-color);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition-default);
+    min-width: 100px;
+    font-size: 1rem;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.pagination button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.pagination button:disabled,
+.pagination button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #ccc;
+    color: #ccc;
+    background: white;
+}
+
+.pagination button:disabled:hover,
+.pagination button.disabled:hover {
+    background: white;
+    color: #ccc;
+    transform: none;
+    box-shadow: none;
+}
+
+.page-info {
+    color: var(--text-secondary);
+    font-weight: 500;
+    min-width: 150px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* ===== Loading State ===== */
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    grid-column: 1 / -1;
+}
+
+.loading-spinner::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== Responsive Design ===== */
+
+/* Desktop & Large Screens (≤ 1200px) */
+@media screen and (max-width: 1200px) {
+    .pandit-grid {
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 1.75rem;
+    }
+}
+
+/* Tablet Landscape (≤ 1024px) */
+@media screen and (max-width: 1024px) {
+    .find-pandit {
+        padding: 20px 15px;
+    }
+
+    .filters {
+        gap: 8px;
+    }
+
+    .filters input,
+    .filters select {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 150px;
+        padding: 8px 10px;
+    }
+
+    .pandit-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .pandit-card {
+        padding: 1.25rem;
+    }
+
+    .pandit-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .pandit-card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet Portrait (≤ 900px) */
+@media screen and (max-width: 900px) {
+    .pandit-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+/* Mobile Landscape & Small Tablets (≤ 768px) */
+@media screen and (max-width: 768px) {
+    .find-pandit {
+        padding: 15px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .filters input,
+    .filters select {
+        width: 100%;
+        flex: none;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .pandit-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+
+    .pandit-card {
+        padding: 1rem;
+    }
+
+    .pandit-card img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+
+    .pandit-card h3 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .pandit-card p {
+        font-size: 0.85rem;
+        margin: 5px 0;
+    }
+
+    .pandit-book-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .no-results {
+        padding: 40px 20px;
+    }
+
+    .no-results h3 {
+        font-size: 1.2rem;
+    }
+
+    .no-results p {
+        font-size: 0.95rem;
+    }
+
+    .pagination {
+        gap: 15px;
+        margin-top: 30px;
+        padding: 15px;
+    }
+
+    .pagination button {
+        padding: 8px 20px;
+        min-width: 80px;
+        font-size: 0.9rem;
+    }
+
+    .page-info {
+        min-width: 120px;
+        font-size: 0.9rem;
+    }
+
+    .debug-info {
+        font-size: 12px !important;
+        padding: 10px !important;
+    }
+}
+
+/* Mobile Portrait (≤ 480px) */
+@media screen and (max-width: 480px) {
+    .find-pandit {
+        padding: 10px;
+    }
+
+    .filters input,
+    .filters select {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .pandit-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .pandit-card {
+        max-width: 300px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .pandit-card img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .pandit-card h3 {
+        font-size: 1rem;
+    }
+
+    .pandit-card p {
+        font-size: 0.85rem;
+    }
+
+    .pandit-book-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .pagination button {
+        width: 100%;
+        max-width: 250px;
+        padding: 8px 12px;
+    }
+
+    .page-info {
+        font-size: 0.85rem;
+        min-width: unset;
+        order: -1;
+    }
+
+    .no-results {
+        padding: 30px 15px;
+    }
+
+    .no-results h3 {
+        font-size: 1rem;
+    }
+
+    .no-results p {
+        font-size: 0.85rem;
+    }
+
+    .debug-info {
+        font-size: 11px !important;
+        padding: 8px !important;
+    }
+}
+
+/* Extra Small Devices (≤ 360px) */
+@media screen and (max-width: 360px) {
+    .pandit-card {
+        padding: 0.875rem;
+    }
+
+    .pandit-card img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .pandit-card h3 {
+        font-size: 0.95rem;
+    }
+
+    .pandit-card p {
+        font-size: 0.8rem;
+    }
+
+    .pandit-book-btn {
+        font-size: 0.8rem;
+        padding: 7px 10px;
+    }
+
+    .pagination button {
+        max-width: 200px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ===== Height-Based Media Queries ===== */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    .find-pandit {
+        padding: 10px;
+    }
+
+    .pandit-grid {
+        gap: 0.875rem;
+    }
+
+    .pandit-card {
+        padding: 0.875rem;
+    }
+
+    .pandit-card img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* ===== Touch Device Optimization ===== */
+@media (hover: none) and (pointer: coarse) {
+    .pandit-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
+    }
+
+    .pandit-card:hover img {
+        transform: none;
+    }
+
+    .pandit-book-btn:hover,
+    .pagination button:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .filters input,
+    .filters select,
+    .pandit-book-btn,
+    .pagination button {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .pandit-book-btn,
+    .pagination button {
+        min-height: 44px; /* Better touch target */
+    }
+}
+
+/* ===== Dark Mode Support ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-light: #1a1a1a;
+        --text-primary: #e2e8f0;
+        --text-secondary: #cbd5e0;
+        --text-tertiary: #a0aec0;
+    }
+
+    .find-pandit {
+        background: #2d3748;
+    }
+
+    .pandit-card {
+        background: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .filters input,
+    .filters select {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+        border-color: var(--primary-color);
+    }
+
+    .debug-info {
+        background: #2c3e50 !important;
+        color: #90caf9 !important;
+        border-left-color: #42a5f5 !important;
+    }
+
+    .no-results {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
+    .no-results h3 {
+        color: #e2e8f0;
+    }
+
+    .page-info {
+        color: #cbd5e0;
+    }
+
+    .pagination button:not(:disabled) {
+        background: #2d3748;
+        color: var(--primary-color);
+    }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+    .find-pandit {
+        padding: 0;
+    }
+
+    .filters,
+    .pagination,
+    .pandit-book-btn,
+    .debug-info {
+        display: none !important;
+    }
+
+    .pandit-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .pandit-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        break-inside: avoid;
+    }
+
+    .pandit-card img {
+        border: 1px solid #000;
+    }
+}
+
+/* ===== Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+    .pandit-card,
+    .pandit-card img,
+    .pandit-book-btn,
+    .pagination button,
+    .filters input,
+    .filters select {
+        transition: none;
+        animation: none;
+    }
+
+    .pandit-card:hover {
+        transform: none;
+    }
+}
+
+/* ===== High Contrast Mode ===== */
+@media (prefers-contrast: high) {
+    .pandit-card {
+        border: 2px solid #000;
+    }
+
+    .filters input,
+    .filters select {
+        border: 2px solid #000;
+    }
+
+    .pandit-book-btn {
+        border: 2px solid #000;
+        background: #000;
+        color: #fff;
+    }
+}
