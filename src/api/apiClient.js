@@ -1,7 +1,7 @@
 // Frontend/src/api/apiClient.js - COMPLETE FIXED VERSION
 import axios from "axios";
 
-const API_BASE = "https://pujanam-backend.onrender.com";
+const API_BASE = "https://pujanam-backend.onrender.com/api";
 
 // Create a unique tab ID for this session
 const getTabId = () => {
