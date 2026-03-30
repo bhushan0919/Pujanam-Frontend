@@ -125,7 +125,7 @@ export const adminApi = {
   }
   
   try {
-    const res = await fetch(`http://localhost:5000/api${base}/pandits`, {
+    const res = await fetch(`https://pujanam-backend.onrender.com/api${base}/pandits`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -169,7 +169,7 @@ export const adminApi = {
       }
     });
     
-    const res = await fetch(`http://localhost:5000/api${base}/pandits/${id}`, {
+    const res = await fetch(`https://pujanam-backend.onrender.com/api${base}/pandits/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -193,7 +193,7 @@ export const adminApi = {
       throw new Error('No admin token found');
     }
     
-    const res = await fetch(`http://localhost:5000/api${base}/pandits/${id}`, {
+    const res = await fetch(`https://pujanam-backend.onrender.com/api${base}/pandits/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -215,7 +215,7 @@ export const adminApi = {
       throw new Error('No admin token found');
     }
     
-    const res = await fetch(`http://localhost:5000/api${base}/pandits/${id}/toggle-availability`, {
+    const res = await fetch(`https://pujanam-backend.onrender.com/api${base}/pandits/${id}/toggle-availability`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -294,9 +294,9 @@ export const adminApi = {
     
     // Try MULTIPLE URL formats to see which works
     const urls = [
-      `http://localhost:5000/api/admin/bookings?${params.toString()}`,
-      `http://127.0.0.1:5000/api/admin/bookings?${params.toString()}`,
-      `http://localhost:5000/api/bookings?${params.toString()}`,
+      `https://pujanam-backend.onrender.com/api/admin/bookings?${params.toString()}`,
+      `https://pujanam-backend.onrender.com/api/admin/bookings?${params.toString()}`,
+      `https://pujanam-backend.onrender.com/api/bookings?${params.toString()}`,
       `/api/admin/bookings?${params.toString()}`
     ];
     

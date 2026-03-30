@@ -269,7 +269,7 @@ const Services = () => {
           onClick={() => {
             console.log('Current services:', services);
             console.log('Testing API...');
-            fetch('http://localhost:5000/api/services/active')
+            fetch('https://pujanam-backend.onrender.com/api/services/active')
               .then(res => {
                 console.log('API Status:', res.status);
                 return res.json();

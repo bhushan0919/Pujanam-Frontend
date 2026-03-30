@@ -1047,7 +1047,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
           // Test API call manually
           const token = localStorage.getItem('panditToken');
           if (token) {
-            fetch('http://localhost:5000/api/pandit/notifications', {
+            fetch('https://pujanam-backend.onrender.com/api/pandit/notifications', {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -1209,7 +1209,7 @@ const debugNotifications = async () => {
     const { token } = authStorage.getAuth('pandit');
     console.log('Token exists:', !!token);
     
-    const response = await fetch('http://localhost:5000/api/pandit/notifications', {
+    const response = await fetch('https://pujanam-backend.onrender.com/api/pandit/notifications', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
