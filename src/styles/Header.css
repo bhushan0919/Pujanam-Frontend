@@ -1,0 +1,702 @@
+/* ===== Header.css ===== */
+
+/* ===== Variables ===== */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+    --primary-header-gradient: linear-gradient(135deg, #ec660d 0%, #eeaf84 50%, #e2610b 100%);
+    --text-primary: #333;
+    --text-secondary: #555;
+    --text-tertiary: #666;
+    --background-light: #f8f9fa;
+    --background-hover: #e9ecef;
+    --border-light: #e9ecef;
+    --border-hover: #ddd;
+    --danger-color: #dc3545;
+    --shadow-sm: 0 2px 15px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.15);
+    --shadow-hover: 0 5px 15px rgba(255, 126, 95, 0.3);
+    --border-radius-sm: 8px;
+    --border-radius-md: 10px;
+    --border-radius-lg: 20px;
+    --border-radius-xl: 25px;
+    --transition-default: all 0.3s ease;
+    --header-height: 70px;
+}
+
+/* ===== Header Container ===== */
+.header {
+    background: var(--primary-header-gradient);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+/* ===== Navigation Bar ===== */
+.nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--header-height);
+    position: relative;
+}
+
+/* ===== Logo / Brand ===== */
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.site-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    gap: 10px;
+    transition: var(--transition-default);
+}
+
+.site-brand:hover {
+    transform: translateY(-2px);
+}
+
+.logo-image {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-sm);
+    object-fit: cover;
+}
+
+.site-name {
+    font-size: 24px;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+}
+
+/* ===== Desktop Right Section ===== */
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.desktop-user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* ===== Nav Links ===== */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    position: relative;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 16px;
+    transition: var(--transition-default);
+    padding: 8px 0;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gradient);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #667eea;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* ===== Desktop User Menu ===== */
+.user-info {
+    position: relative;
+}
+
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: var(--border-radius-lg);
+    background: var(--background-light);
+    border: none;
+    transition: var(--transition-default);
+    min-width: 120px;
+}
+
+.user-menu-btn:hover {
+    background: var(--background-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    min-width: 200px;
+    z-index: 1001;
+    overflow: hidden;
+    animation: slideDown 0.3s ease-out;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition-default);
+}
+
+.dropdown-item:hover {
+    background: var(--background-light);
+    padding-left: 25px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 5px 0;
+}
+
+.logout-btn {
+    color: var(--danger-color);
+}
+
+/* ===== Auth Links (Desktop) ===== */
+.auth-links {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.login-btn {
+    padding: 8px 16px;
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: var(--transition-default);
+    background: var(--background-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+
+.login-btn:hover {
+    background: var(--background-hover);
+    transform: translateY(-2px);
+}
+
+/* ===== Book Now Button (Desktop) ===== */
+.book-now-btn {
+    padding: 10px 24px;
+    background: var(--secondary-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-xl);
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition-default);
+    white-space: nowrap;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.book-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.book-now-btn:active {
+    transform: translateY(0);
+}
+
+/* ===== Hamburger Button — hidden on desktop ===== */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1002;
+    flex-shrink: 0;
+}
+
+.mobile-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: white;
+    margin: 3.5px 0;
+    border-radius: 2px;
+    transition: var(--transition-default);
+}
+
+/* Hamburger → X animation */
+.mobile-menu-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+}
+.mobile-menu-btn.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.mobile-menu-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -6px);
+}
+
+/* ===== Mobile-only elements — hidden on desktop ===== */
+.mobile-user-section,
+.mobile-auth-section,
+.mobile-book-now-btn {
+    display: none;
+}
+
+/* ===== Mobile slide-in panel styles (structure only, shown via media query) ===== */
+.mobile-user-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 8px;
+}
+
+.mobile-user-details .user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin: 0 0 2px 0;
+}
+
+.mobile-user-details .user-email {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s ease;
+}
+
+.mobile-nav-item:hover {
+    background: var(--background-light);
+}
+
+.mobile-nav-item.logout-item {
+    color: var(--danger-color);
+    margin-top: 8px;
+}
+
+.mobile-login-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 12px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--background-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ===== Overlay ===== */
+.menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    animation: fadeIn 0.25s ease-out;
+}
+
+/* ===== Animations ===== */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ===== Tablet Landscape (≤ 1024px) ===== */
+@media screen and (max-width: 1024px) {
+    .nav { padding: 0 15px; }
+    .nav-links { gap: 15px; }
+    .site-name { font-size: 22px; }
+    .book-now-btn {
+        padding: 8px 18px;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+}
+
+/* ===== Mobile / Tablet Portrait (≤ 768px) ===== */
+@media screen and (max-width: 768px) {
+
+    /* Nav bar layout: hamburger | logo | book-now */
+    .nav {
+        padding: 0 12px;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    /* Show hamburger */
+    .mobile-menu-btn {
+        display: flex;
+        order: 1;
+    }
+
+    /* Logo in middle */
+    .nav-left {
+        order: 2;
+        flex: 1;
+    }
+
+    .site-name { font-size: 20px; }
+    .logo-image { width: 35px; height: 35px; }
+
+    /* Desktop nav panel — slide in from left */
+    .nav-right {
+        order: 4;
+        position: fixed;
+        top: var(--header-height);
+        left: -100%;           /* hidden off-screen */
+        width: 80%;
+        max-width: 300px;
+        height: calc(100vh - var(--header-height));
+        background: white;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px 20px 30px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    .nav-right-open {
+        left: 0;             /* slide in */
+    }
+
+    /* Nav links stacked vertically */
+    .nav-links {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: 100%;
+    }
+
+    .nav-links li { width: 100%; }
+
+    .nav-link {
+        display: block;
+        padding: 14px 4px;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 16px;
+        color: var(--text-primary);
+    }
+
+    .nav-link::after { display: none; }
+
+    /* Hide desktop user controls */
+    .desktop-user-section { display: none; }
+
+    /* Show mobile user / auth sections inside the panel */
+    .nav-right-open .mobile-user-section,
+    .nav-right-open .mobile-auth-section {
+        display: block;
+        margin-top: 8px;
+    }
+
+    /* Mobile Book Now inside panel */
+    .nav-right-open .mobile-book-now-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 13px;
+        background: var(--secondary-gradient);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-xl);
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Desktop Book Now — keep visible in header on right side */
+    .book-now-btn {
+        order: 3;
+        margin-left: auto;
+        margin-right: 0;
+        padding: 8px 14px;
+        font-size: 13px;
+        border-radius: var(--border-radius-xl);
+    }
+
+    /* Show overlay when menu open */
+    .menu-overlay {
+        display: block;
+    }
+}
+
+/* ===== Small Mobile (≤ 480px) ===== */
+@media screen and (max-width: 480px) {
+    .nav { padding: 0 10px; gap: 8px; }
+    .site-name { font-size: 18px; }
+    .logo-image { width: 32px; height: 32px; }
+
+    .nav-right {
+        width: 85%;
+        padding: 14px 16px 24px;
+    }
+
+    .nav-link { font-size: 15px; padding: 12px 4px; }
+
+    .book-now-btn {
+        padding: 7px 11px;
+        font-size: 12px;
+    }
+}
+
+/* ===== Extra Small (≤ 360px) ===== */
+@media screen and (max-width: 360px) {
+    .site-name { font-size: 16px; }
+    .logo-image { width: 28px; height: 28px; }
+    .site-brand { gap: 6px; }
+    .nav-link { font-size: 14px; padding: 11px 4px; }
+
+    .book-now-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+
+/* ===== Short screens (landscape phone) ===== */
+@media screen and (max-height: 600px) and (max-width: 768px) {
+    .nav-right { padding: 10px 16px 16px; }
+    .nav-link  { padding: 9px 4px; }
+}
+
+/* ===== Touch devices — remove hover transforms ===== */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link:hover,
+    .user-menu-btn:hover,
+    .book-now-btn:hover,
+    .login-btn:hover,
+    .dropdown-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .mobile-menu-btn,
+    .book-now-btn,
+    .login-btn,
+    .mobile-nav-item,
+    .dropdown-item {
+        -webkit-tap-highlight-color: transparent;
+        min-height: 44px;
+    }
+}
+
+/* ===== Dark Mode ===== */
+@media (prefers-color-scheme: dark) {
+    .header {
+        background: #1a1a1a;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-menu-btn span { background: #e2e8f0; }
+
+    .nav-link { color: #cbd5e0; }
+    .nav-link:hover { color: #90caf9; }
+
+    .user-menu-btn,
+    .login-btn {
+        background: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+
+    .user-menu-btn:hover { background: #3a4556; }
+    .user-name { color: #e2e8f0; }
+
+    .user-dropdown,
+    .nav-right {
+        background: #1e1e1e;
+        border: 1px solid #2d3748;
+    }
+
+    .dropdown-item { color: #e2e8f0; }
+    .dropdown-item:hover { background: #2d3748; }
+    .dropdown-divider { background: #2d3748; }
+    .menu-overlay { background: rgba(0, 0, 0, 0.75); }
+
+    .mobile-login-btn {
+        background: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+
+    .mobile-nav-item { color: #e2e8f0; }
+    .mobile-nav-item:hover { background: #2d3748; }
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    .nav-link::after,
+    .nav-link,
+    .user-menu-btn,
+    .book-now-btn,
+    .login-btn,
+    .mobile-menu-btn span,
+    .nav-right {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ===== High Contrast ===== */
+@media (prefers-contrast: high) {
+    .user-menu-btn,
+    .login-btn {
+        border: 2px solid #000;
+    }
+
+    .book-now-btn {
+        border: 2px solid #000;
+        background: #000;
+        color: #fff;
+    }
+
+    .site-name {
+        -webkit-text-fill-color: #000;
+        color: #000;
+    }
+}
+
+/* ===== Print ===== */
+@media print {
+    .header { position: static; box-shadow: none; border-bottom: 1px solid #000; }
+
+    .book-now-btn,
+    .mobile-menu-btn,
+    .desktop-user-section,
+    .menu-overlay {
+        display: none !important;
+    }
+
+    .nav-link {
+        color: #000 !important;
+    }
+
+    .site-name {
+        -webkit-text-fill-color: #000;
+        color: #000;
+    }
+}
