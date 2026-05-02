@@ -74,7 +74,7 @@ export default function BookingForm({ service, pandit, onSuccess, onClose }) {
         if (savedBooking) {
           try {
             const bookingData = JSON.parse(savedBooking);
-            //console.log('🔄 Restoring pending booking:', bookingData);
+            console.log('🔄 Restoring pending booking:', bookingData);
             
             if (bookingData.formData) {
               setForm(bookingData.formData);

@@ -94,8 +94,8 @@ const UserDashboard = () => {
 
 
   useEffect(() => {
-    //console.log('🔄 UserDashboard mounted');
-    //console.log('Auth user:', user);
+    console.log('🔄 UserDashboard mounted');
+    console.log('Auth user:', user);
     loadBookings();
   }, []);
 
@@ -111,11 +111,11 @@ const UserDashboard = () => {
 
   const loadBookings = async () => {
     try {
-      //console.log('📡 Loading user bookings...');
+      console.log('📡 Loading user bookings...');
       setLoading(true);
 
       const result = await userApi.getBookings();
-      //console.log('✅ Bookings loaded:', result);
+      console.log('✅ Bookings loaded:', result);
 
       if (result.success) {
         setBookings(result.bookings || []);
@@ -237,7 +237,7 @@ const UserDashboard = () => {
         }
       );
       const data = await response.json();
-      //console.log('Verification code response:', data);
+      console.log('Verification code response:', data);
       if (data.success && data.data.showCode) {
         setVerificationCodes(prev => ({
           ...prev,
@@ -365,7 +365,7 @@ const UserDashboard = () => {
       });
 
       const data = await response.json();
-      //console.log('Support ticket response:', data);
+      console.log('Support ticket response:', data);
 
       if (data.success) {
         setSupportSubmitted(true);
@@ -403,7 +403,7 @@ const UserDashboard = () => {
       });
 
       const data = await response.json();
-      //console.log('User tickets:', data);
+      console.log('User tickets:', data);
 
       if (data.success) {
         setUserTickets(data.tickets || []);

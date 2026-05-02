@@ -205,7 +205,7 @@ export const panditApi = {
      
       // Log first notification for debugging
       if (notifications.length > 0) {
-        //console.log('   First notification sample:', notifications[0]);
+        console.log('   First notification sample:', notifications[0]);
       }
 
       return {

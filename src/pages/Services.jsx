@@ -19,12 +19,12 @@ const Services = () => {
 
   // Load services on component mount
   useEffect(() => {
-    //console.log('🔄 Services component mounted');
+    console.log('🔄 Services component mounted');
     loadServices();
 
     // Listen for booking events from ProtectedBooking
     const handleOpenBooking = (event) => {
-      //console.log('🎯 Received openBooking event:', event.detail);
+      console.log('🎯 Received openBooking event:', event.detail);
       openBooking(event.detail);
     };
 
@@ -64,7 +64,7 @@ const Services = () => {
       setLoading(true);
       setError("");
       const data = await serviceApi.getActiveServices();
-      //console.log('✅ Services loaded:', data?.length || 0);
+      console.log('✅ Services loaded:', data?.length || 0);
       
       if (data && data.length > 0) {
         setServices(data);
@@ -125,7 +125,7 @@ const Services = () => {
 
   // Open booking for specific service
   const openBooking = (service) => {
-    //console.log("📞 Opening booking for:", service?.name);
+    console.log("📞 Opening booking for:", service?.name);
     if (service) {
       setSelectedServiceForBooking(service);
       setSelectedServiceForDetails(null);
@@ -134,7 +134,7 @@ const Services = () => {
 
   // Open details for specific service
   const openDetails = (service) => {
-    //console.log("📖 Opening details for:", service.name);
+    console.log("📖 Opening details for:", service.name);
     setSelectedServiceForDetails(service);
     setSelectedServiceForBooking(null);
   };
@@ -151,7 +151,7 @@ const Services = () => {
 
   // Handle successful booking
   const handleBookingSuccess = (booking) => {
-    //console.log("✅ Booking successful:", booking);
+    console.log("✅ Booking successful:", booking);
     setSelectedServiceForBooking(null);
   };
 

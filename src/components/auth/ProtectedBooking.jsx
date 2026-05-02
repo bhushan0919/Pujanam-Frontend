@@ -27,7 +27,7 @@ const ProtectedBooking = ({ children, service, onBookClick }) => {
       navigate('/user/login');
     } else {
       // User is authenticated - call the parent's booking function
-      //console.log('✅ User authenticated, calling onBookClick');
+      console.log('✅ User authenticated, calling onBookClick');
       if (onBookClick) {
         onBookClick(service);
       } else {

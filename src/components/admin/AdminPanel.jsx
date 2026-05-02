@@ -249,8 +249,8 @@ const AdminPanel = () => {
     const localToken = localStorage.getItem('adminToken');
     const localUser = localStorage.getItem('adminUser');
 
-    //console.log('   sessionStorage token:', !!sessionToken);
-    //console.log('   localStorage token:', !!localToken);
+    console.log('   sessionStorage token:', !!sessionToken);
+    console.log('   localStorage token:', !!localToken);
 
     // Use whichever token exists
     const token = sessionToken || localToken;
@@ -352,9 +352,9 @@ const AdminPanel = () => {
         const data = await panditApi.getAllPandits();
         setPandits(data.pandits || []);
       } else if (activeTab === 'services') {
-        //console.log('🔄 Loading ALL services in admin panel...');
+        console.log('🔄 Loading ALL services in admin panel...');
         const data = await serviceApi.getAllServices(); // This gets ALL services
-        //console.log('📦 Services loaded in admin:', data.length);
+        console.log('📦 Services loaded in admin:', data.length);
         setServices(data);
       }
     } catch (error) {

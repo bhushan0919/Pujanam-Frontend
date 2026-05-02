@@ -5,7 +5,7 @@ export const analytics = {
   // Track page views
   trackPageView: (pageName) => {
     if (process.env.NODE_ENV === 'production') {
-      //console.log('📊 Page View:', pageName);
+      console.log('📊 Page View:', pageName);
       // Integrate with Google Analytics, Mixpanel, etc.
       // Example: gtag('config', 'GA_MEASUREMENT_ID', { page_title: pageName });
     }
@@ -14,7 +14,7 @@ export const analytics = {
   // Track user actions
   trackEvent: (eventName, properties = {}) => {
     if (process.env.NODE_ENV === 'production') {
-      //console.log('🎯 Event:', eventName, properties);
+      console.log('🎯 Event:', eventName, properties);
       // Example: gtag('event', eventName, properties);
     }
   },

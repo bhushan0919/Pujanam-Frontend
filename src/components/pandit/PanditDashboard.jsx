@@ -61,13 +61,13 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      //console.log('📊 Loading dashboard data...');
+      console.log('📊 Loading dashboard data...');
       setLoading(true);
       setError('');
 
       const data = await panditApi.getDashboard();
 
-      //console.log('✅ Dashboard data loaded:', data);
+      console.log('✅ Dashboard data loaded:', data);
 
       if (data.success) {
         setDashboardData(data.dashboard);
@@ -86,14 +86,14 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   const loadBookings = async () => {
     try {
-      //console.log('📅 Loading bookings for tab:', activeTab);
+      console.log('📅 Loading bookings for tab:', activeTab);
       const status = activeTab === 'pending' ? 'notified' :
         activeTab === 'confirmed' ? 'confirmed' :
           activeTab === 'upcoming' ? 'accepted' : '';
 
       const params = status ? { status } : {};
       const res = await bookingApi.getPanditBookings(params);
-      //console.log('✅ Bookings loaded:', res.bookings?.length || 0);
+      console.log('✅ Bookings loaded:', res.bookings?.length || 0);
       setBookings(res.bookings || []);
     } catch (error) {
       console.error('❌ Error loading bookings:', error);
@@ -104,21 +104,21 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   const loadNotifications = async () => {
     try {
-      //console.log('🔔 Loading notifications...');
+      console.log('🔔 Loading notifications...');
       const res = await panditApi.getNotifications();
-      //console.log('✅ Notifications response:', res);
+      console.log('✅ Notifications response:', res);
 
       if (res.success) {
         setNotifications(res.notifications || []);
-        //console.log(`📨 Loaded ${res.notifications?.length || 0} notifications`);
+        console.log(`📨 Loaded ${res.notifications?.length || 0} notifications`);
 
         // If no notifications, show demo for testing
         if (res.notifications?.length === 0) {
-          //console.log('📭 No notifications found');
+          console.log('📭 No notifications found');
           setNotifications([]); // ✅ keep empty
         }
       } else {
-        //console.log('⚠️ API returned error:', res.message);
+        console.log('⚠️ API returned error:', res.message);
         setNotifications([]);
       }
     } catch (error) {
@@ -131,7 +131,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   // Load dashboard data and notifications only once on mount
   // Load dashboard data and notifications only once on mount
   useEffect(() => {
-    //console.log('🚀 PanditDashboard mounted - Loading all data');
+    console.log('🚀 PanditDashboard mounted - Loading all data');
 
     const loadAllData = async () => {
       setLoading(true);
@@ -141,7 +141,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
           loadNotifications(),
           loadBookings()
         ]);
-        //console.log('✅ All data loaded successfully');
+        console.log('✅ All data loaded successfully');
       } catch (error) {
         console.error('❌ Error loading data:', error);
       } finally {
@@ -152,7 +152,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     loadAllData();
 
     const intervalId = setInterval(() => {
-      //console.log('🔄 Periodic refresh...');
+      console.log('🔄 Periodic refresh...');
       loadNotifications();
       if (activeTab === 'dashboard') loadDashboardData();
       if (activeTab === 'upcoming') loadBookings();
@@ -163,7 +163,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   // Load specific data when tab changes
   useEffect(() => {
-    //console.log(`📂 Tab changed to: ${activeTab}`);
+    console.log(`📂 Tab changed to: ${activeTab}`);
 
     switch (activeTab) {
       case 'notifications':
@@ -183,7 +183,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
     // Listen for remove_notification events
     const handleRemoveNotification = (data) => {
-      //console.log('📡 Received remove_notification:', data);
+      console.log('📡 Received remove_notification:', data);
       // Remove the notification from the list
       setNotifications(prev =>
         prev.filter(notification => notification.bookingId !== data.bookingId)
@@ -196,7 +196,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     };
     // Listen for booking_accepted events (for the accepting pandit)
     const handleBookingAccepted = (data) => {
-      //console.log('📡 Booking accepted:', data);
+      console.log('📡 Booking accepted:', data);
       // Refresh bookings to show the accepted status
       loadBookings();
       loadDashboardData();
@@ -232,12 +232,12 @@ const PanditDashboard = ({ pandit, onLogout }) => {
       // ✅ FIX: Get token using authStorage
       const { token, data: panditData } = authStorage.getAuth('pandit');
 
-      //console.log('🔍 Loading detailed data:', detailedView);
-      //console.log('   Token exists:', !!token);
-      //console.log('   Pandit data exists:', !!panditData);
+      console.log('🔍 Loading detailed data:', detailedView);
+      console.log('   Token exists:', !!token);
+      console.log('   Pandit data exists:', !!panditData);
 
       if (!token) {
-        //console.log('❌ No pandit token found');
+        console.log('❌ No pandit token found');
         setError('Session expired. Please login again.');
         // Don't automatically logout - just show error
         setDetailedData([]);
@@ -250,7 +250,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const expiry = payload.exp * 1000;
         if (Date.now() >= expiry) {
-          //console.log('⚠️ Token expired');
+          console.log('⚠️ Token expired');
           setError('Session expired. Please login again.');
           authStorage.clearAuth('pandit');
           setDetailedData([]);
@@ -258,10 +258,10 @@ const PanditDashboard = ({ pandit, onLogout }) => {
           return;
         }
       } catch (e) {
-        //console.log('Could not verify token expiry');
+        console.log('Could not verify token expiry');
       }
 
-      //console.log(`📊 Loading ${detailedView} details with token...`);
+      console.log(`📊 Loading ${detailedView} details with token...`);
 
       switch (detailedView) {
         case 'todayBookings':
@@ -364,7 +364,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
               'Content-Type': 'application/json'
             }
           });
-          //console.log('🔄 Activity updated');
+          console.log('🔄 Activity updated');
         }
       } catch (error) {
         console.error('Error updating activity:', error);
@@ -573,12 +573,12 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   };
 
   const handleStatCardClick = (section) => {
-    //console.log(`📊 Clicked on ${section}`);
+    console.log(`📊 Clicked on ${section}`);
 
     // Check if pandit is authenticated
     const { token } = authStorage.getAuth('pandit');
     if (!token) {
-      //console.log('❌ No pandit token found');
+      console.log('❌ No pandit token found');
       alert('Please login again to view details');
       handleLogout();
       return;
@@ -601,7 +601,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   }, [socket, isConnected, pandit]);
 
   const handleLogout = () => {
-    //console.log('🚪 Pandit logging out...');
+    console.log('🚪 Pandit logging out...');
 
     // ✅ Use authStorage to clear (handles all key formats)
     authStorage.clearAuth('pandit');
@@ -626,7 +626,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   const handleAvailabilityToggle = async () => {
     try {
       const newStatus = !isOnline;
-      //console.log('🔄 Toggling availability to:', newStatus);
+      console.log('🔄 Toggling availability to:', newStatus);
       await panditApi.updateAvailability({ isOnline: newStatus });
       setIsOnline(newStatus);
       // Update localStorage immediately
@@ -639,7 +639,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   const acceptBooking = async (bookingId) => {
     try {
-      //console.log('✅ Accepting booking:', bookingId);
+      console.log('✅ Accepting booking:', bookingId);
       const result = await bookingApi.acceptBooking(bookingId);
 
       if (result.success) {
@@ -661,7 +661,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   const refreshAllData = async () => {
     setIsRefreshing(true);
-    //console.log('🔄 Refreshing all dashboard data...');
+    console.log('🔄 Refreshing all dashboard data...');
 
     try {
       // Refresh based on current active tab
@@ -681,7 +681,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
       await loadDashboardData(); // For stats
       await loadBookings(); // For counts
 
-      //console.log('✅ All data refreshed successfully');
+      console.log('✅ All data refreshed successfully');
     } catch (error) {
       console.error('❌ Error refreshing data:', error);
     } finally {
@@ -692,14 +692,14 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   // Generate verification code
   // Generate verification code - DON'T show code to pandit
   const generateVerificationCode = async (bookingId) => {
-    //console.log('🔐 Generating code for booking:', bookingId);
+    console.log('🔐 Generating code for booking:', bookingId);
 
     try {
       setIsGeneratingCode(true);
       const { token, data: panditData } = authStorage.getAuth('pandit');
 
-      //console.log('   Pandit ID:', panditData?.id);
-      //console.log('   Token exists:', !!token);
+      console.log('   Pandit ID:', panditData?.id);
+      console.log('   Token exists:', !!token);
 
       if (!token) {
         alert('Session expired. Please login again.');
@@ -717,7 +717,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
       });
 
       const data = await response.json();
-      //console.log('Generate code response:', data);
+      console.log('Generate code response:', data);
 
       if (data.success) {
         alert('✅ Verification code has been generated and sent to customer.\n\nPlease ask the customer to provide the code from their dashboard.');
@@ -757,7 +757,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
       });
 
       const data = await response.json();
-      //console.log('Verify code response:', data);
+      console.log('Verify code response:', data);
 
       if (data.success) {
         alert('✅ Booking completed successfully!');
@@ -783,9 +783,9 @@ const PanditDashboard = ({ pandit, onLogout }) => {
 
   // Open code modal for a booking
   const openCodeModal = async (booking) => {
-    //console.log('🎯 openCodeModal called with booking:', booking);
-    //console.log('   Booking ID:', booking?._id);
-    //console.log('   Booking status:', booking?.status);
+    console.log('🎯 openCodeModal called with booking:', booking);
+    console.log('   Booking ID:', booking?._id);
+    console.log('   Booking status:', booking?.status);
 
     if (!booking || !booking._id) {
       console.error('❌ Invalid booking object');
@@ -799,7 +799,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     // Check if code already exists
     try {
       const { token } = authStorage.getAuth('pandit');
-      //console.log('   Token exists:', !!token);
+      console.log('   Token exists:', !!token);
 
       if (!token) {
         alert('Session expired. Please login again.');
@@ -815,9 +815,9 @@ const PanditDashboard = ({ pandit, onLogout }) => {
         }
       });
 
-      //console.log('   Code status response status:', response.status);
+      console.log('   Code status response status:', response.status);
       const data = await response.json();
-      //console.log('   Code status data:', data);
+      console.log('   Code status data:', data);
 
       if (data.success && data.data && data.data.hasCode && !data.data.isExpired) {
         setVerificationCode(data.data.verificationCode);
@@ -825,11 +825,11 @@ const PanditDashboard = ({ pandit, onLogout }) => {
           code: data.data.verificationCode,
           expiresAt: data.data.expiresAt
         });
-        //console.log('   Existing code found:', data.data.verificationCode);
+        console.log('   Existing code found:', data.data.verificationCode);
       } else {
         setVerificationCode('');
         setCodeStatus(null);
-        //console.log('   No existing code found');
+        console.log('   No existing code found');
       }
     } catch (error) {
       console.error('❌ Error checking code status:', error);
@@ -838,7 +838,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     }
 
     setShowCodeModal(true);
-    //console.log('   Modal opened');
+    console.log('   Modal opened');
   };
 
 
@@ -854,7 +854,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     }
 
     try {
-      //console.log('✅ Attempting to complete booking:', bookingId);
+      console.log('✅ Attempting to complete booking:', bookingId);
 
       // Get token
       const { token } = authStorage.getAuth('pandit');
@@ -874,7 +874,7 @@ const PanditDashboard = ({ pandit, onLogout }) => {
       });
 
       const data = await response.json();
-      //console.log('Complete booking response:', data);
+      console.log('Complete booking response:', data);
 
       if (response.ok && data.success) {
         alert('✅ Booking marked as completed successfully!');
@@ -1001,15 +1001,15 @@ ${samagriText}
 
 
   const handleTabChange = (tab) => {
-    //console.log(`📂 Switching to tab: ${tab}`);
+    console.log(`📂 Switching to tab: ${tab}`);
     setActiveTab(tab);
 
     // Load appropriate data when switching tabs
     if (tab === 'notifications') {
-      //console.log('🔔 Loading notifications for notifications tab...');
+      console.log('🔔 Loading notifications for notifications tab...');
       loadNotifications();
     } else if (tab === 'upcoming') {
-      //console.log('📅 Loading bookings for upcoming tab...');
+      console.log('📅 Loading bookings for upcoming tab...');
       loadBookings();
     }
   };
@@ -1080,20 +1080,20 @@ ${samagriText}
     const token = localStorage.getItem('panditToken');
     const data = localStorage.getItem('panditData');
 
-    //console.log('🔍 Auth Check:');
-    //console.log('   Token exists:', !!token);
+    console.log('🔍 Auth Check:');
+    console.log('   Token exists:', !!token);
     if (token) {
-      //console.log('   Token (first 20 chars):', token.substring(0, 20) + '...');
-      //console.log('   Token length:', token.length);
+      console.log('   Token (first 20 chars):', token.substring(0, 20) + '...');
+      console.log('   Token length:', token.length);
     }
-    //console.log('   Pandit data exists:', !!data);
+    console.log('   Pandit data exists:', !!data);
     if (data) {
       try {
         const panditData = JSON.parse(data);
-        //console.log('   Pandit name:', panditData.name);
-        //console.log('   Pandit ID:', panditData.id);
+        console.log('   Pandit name:', panditData.name);
+        console.log('   Pandit ID:', panditData.id);
       } catch (e) {
-        //console.log('   Error parsing pandit data:', e);
+        console.log('   Error parsing pandit data:', e);
       }
     }
 
@@ -1643,11 +1643,11 @@ ${samagriText}
 
       <button
         onClick={() => {
-          //console.log('🔍 Debug - Current auth state:');
-          //console.log('Pandit token:', localStorage.getItem('panditToken') ? 'Present' : 'Missing');
-          //console.log('Pandit data:', localStorage.getItem('panditData'));
-          //console.log('Current URL:', window.location.href);
-          //console.log('API Base URL:', process.env.VITE_API_BASE_URL);
+          console.log('🔍 Debug - Current auth state:');
+          console.log('Pandit token:', localStorage.getItem('panditToken') ? 'Present' : 'Missing');
+          console.log('Pandit data:', localStorage.getItem('panditData'));
+          console.log('Current URL:', window.location.href);
+          console.log('API Base URL:', process.env.VITE_API_BASE_URL);
 
           // Test API call manually
           const token = localStorage.getItem('panditToken');
@@ -1659,7 +1659,7 @@ ${samagriText}
               }
             })
               .then(res => {
-                //console.log('API Status:', res.status);
+                console.log('API Status:', res.status);
                 return res.json();
               })
               .then(data => data)
@@ -1847,7 +1847,7 @@ const BookingCard = ({ booking, onAccept, onComplete, onGenerateCode, onWhatsApp
       {['accepted', 'confirmed'].includes(booking.status) && (
         <button
           onClick={() => {
-            //console.log('Complete Puja button clicked for booking:', booking._id);
+            console.log('Complete Puja button clicked for booking:', booking._id);
             onGenerateCode(booking);
           }} className="btn-complete"
         >

@@ -36,7 +36,7 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('connect', () => {
-        //console.log('✅ Socket connected successfully');
+        console.log('✅ Socket connected successfully');
         setIsConnected(true);
 
         newSocket.emit('register', {
@@ -46,12 +46,12 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('connect_error', (error) => {
-        //console.log('⚠️ Socket connection error:', error.message);
+        console.log('⚠️ Socket connection error:', error.message);
         setIsConnected(false);
       });
 
       newSocket.on('disconnect', (reason) => {
-        //console.log('🔴 Socket disconnected:', reason);
+        console.log('🔴 Socket disconnected:', reason);
         setIsConnected(false);
         
         if (reason === 'io server disconnect') {
@@ -60,7 +60,7 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('reconnect', (attemptNumber) => {
-        //console.log(`🔄 Socket reconnected after ${attemptNumber} attempts`);
+        console.log(`🔄 Socket reconnected after ${attemptNumber} attempts`);
         setIsConnected(true);
         
         if (data?.id) {

@@ -8,7 +8,7 @@ const BookNowButton = ({ service, onBookClick }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    //console.log('🎯 BookNowButton clicked for:', service.name);
+    console.log('🎯 BookNowButton clicked for:', service.name);
     
     if (!isAuthenticated) {
       // Store pending booking

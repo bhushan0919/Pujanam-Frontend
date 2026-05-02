@@ -4,26 +4,26 @@ import { authStorage } from '../../api/apiClient';
 
 const AuthDebugger = () => {
   const checkAllAuth = () => {
-    //console.log('🔍 AUTH DEBUGGER - Checking all storage:');
+    console.log('🔍 AUTH DEBUGGER - Checking all storage:');
     
     // Check localStorage
-    //console.log('\n📦 localStorage:');
+    console.log('\n📦 localStorage:');
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       const value = localStorage.getItem(key);
-      //console.log(`   ${key}:`, value ? `${value.substring(0, 50)}...` : 'null');
+      console.log(`   ${key}:`, value ? `${value.substring(0, 50)}...` : 'null');
     }
     
     // Check sessionStorage
-    //console.log('\n📋 sessionStorage:');
+    console.log('\n📋 sessionStorage:');
     for (let i = 0; i < sessionStorage.length; i++) {
       const key = sessionStorage.key(i);
       const value = sessionStorage.getItem(key);
-      //console.log(`   ${key}:`, value ? `${value.substring(0, 50)}...` : 'null');
+      console.log(`   ${key}:`, value ? `${value.substring(0, 50)}...` : 'null');
     }
     
     // Check authStorage for each type
-    //console.log('\n🔐 authStorage.getAuth():');
+    console.log('\n🔐 authStorage.getAuth():');
     ['admin', 'pandit', 'user'].forEach(type => {
       const auth = authStorage.getAuth(type);
       
@@ -32,7 +32,7 @@ const AuthDebugger = () => {
 
   const clearAll = () => {
     authStorage.clearAllAuth();
-    //console.log('✅ All auth cleared');
+    console.log('✅ All auth cleared');
     checkAllAuth();
   };
 

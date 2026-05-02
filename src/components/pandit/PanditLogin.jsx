@@ -26,7 +26,7 @@ const PanditLogin = ({ onLogin }) => {
   setError('');
 
   try {
-    //console.log('🔐 Pandit login attempt...');
+    console.log('🔐 Pandit login attempt...');
 
     // Clear previous sessions
     authStorage.clearAuth('admin');
@@ -34,19 +34,19 @@ const PanditLogin = ({ onLogin }) => {
     authStorage.clearAuth('pandit');
 
     const result = await panditApi.login(credentials);
-    //console.log('✅ Login response:', result);
+    console.log('✅ Login response:', result);
 
     if (result.success && result.token) {
-      //console.log('🎯 Login success');
+      console.log('🎯 Login success');
 
       // ✅ DON'T save again here - panditApi.login already saved
       // Just verify the save worked
       const { token: savedToken, data: savedData } = authStorage.getAuth('pandit');
-      //console.log('🔍 Verification - Token saved:', !!savedToken);
-      //console.log('🔍 Verification - Data saved:', !!savedData);
+      console.log('🔍 Verification - Token saved:', !!savedToken);
+      console.log('🔍 Verification - Data saved:', !!savedData);
 
       if (savedToken && savedData) {
-        //console.log('✅ Storage verified, redirecting...');
+        console.log('✅ Storage verified, redirecting...');
         
         // ✅ Use window.location for guaranteed redirect
         window.location.href = '/pandit';

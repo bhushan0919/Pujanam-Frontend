@@ -80,7 +80,7 @@ const UserLogin = () => {
   }
 };
 const handleBookingSuccess = (result) => {
-  //console.log("✅ Booking successful:", result);
+  console.log("✅ Booking successful:", result);
   // Clear any pending booking data
   localStorage.removeItem('pendingBooking');
   if (onSuccess) onSuccess(result);

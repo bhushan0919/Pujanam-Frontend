@@ -59,7 +59,7 @@ const ForgotPassword = () => {
         setResendTimer(60);
         setStep(2);
         if (data.resetToken) {
-          //console.log('Development reset code:', data.resetToken);
+          console.log('Development reset code:', data.resetToken);
         }
       } else {
         setError(data.message);

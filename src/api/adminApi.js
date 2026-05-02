@@ -102,7 +102,7 @@ export const adminApi = {
   // Log FormData for debugging
 
   for (let pair of formData.entries()) {
-    //console.log(`   ${pair[0]}: ${pair[1]}`);
+    console.log(`   ${pair[0]}: ${pair[1]}`);
   }
   
   try {
@@ -330,7 +330,7 @@ updateService: async (id, serviceData) => {
   buildUrl(`/bookings?${params.toString()}`)
 ];
     
-    //console.log('📡 Testing URLs:');
+    console.log('📡 Testing URLs:');
     
     // Try each URL until one works
     for (const url of urls) {
@@ -356,10 +356,10 @@ updateService: async (id, serviceData) => {
           const data = await response.json();
           return data;
         } else {
-          //console.log(`❌ Failed with status: ${response.status}`);
+          console.log(`❌ Failed with status: ${response.status}`);
         }
       } catch (e) {
-        //console.log(`❌ Error with ${url}:`, e.message);
+        console.log(`❌ Error with ${url}:`, e.message);
       }
     }
     
