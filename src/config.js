@@ -1,9 +1,14 @@
-// frontend/src/config.js
+// UPDATE for production
 const getApiUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   if (envUrl) return envUrl;
-  if (import.meta.env.PROD) return '/api';
-  return 'http://localhost:5000/api';
+  
+  // IMPORTANT: Change this to your Render backend URL
+  if (import.meta.env.PROD) {
+    return 'https://pujanam-backend.onrender.com/api';  // ← CHANGE THIS
+  }
+  
+  return 'http://localhost:5000';
 };
 
 export const API_CONFIG = {

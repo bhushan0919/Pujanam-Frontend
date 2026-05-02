@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faMagnifyingGlass, faScrewdriverWrench, faBook, faUserCheck, faHeadset, faCalendar, faNewspaper, faUserPlus, faCircleXmark, faPlus, faHeadSideCough, faPager, faParagraph, faLocation, faLocationDot, faEnvelope, faPhone, faStar, faGraduationCap, faPencil, faTrash, faCheck, faRupee, faRupeeSign, faIndianRupeeSign, faClock, faFile, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { buildUrl } from '../../config';
 
 const AdminPanel = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,16 +57,16 @@ const AdminPanel = () => {
 
 
   useEffect(() => {
- 
+
     const { token } = authStorage.getAuth('admin');
-  
+
     if (!token) {
- 
+
       return;
     }
 
     if (activeTab === 'bookings') {
- 
+
       if (!isLoadingBookings) {
         loadAllBookings();
       }
@@ -77,7 +78,7 @@ const AdminPanel = () => {
   // Load booking data
   const loadAllBookings = async () => {
     if (isLoadingBookings) {
-     
+
       return;
     }
 
@@ -85,17 +86,17 @@ const AdminPanel = () => {
       setIsLoadingBookings(true);
       setLoading(true);
 
-   
+
       const { token } = authStorage.getAuth('admin');
 
-    
+
       if (!token) {
- 
+
         return; // Prevent logout loop
       }
 
       const data = await adminApi.getAllBookings(filters);
- 
+
       setAllBookings(data.bookings || []);
       setBookingStats(data.stats || {});
 
@@ -103,16 +104,16 @@ const AdminPanel = () => {
       setMessage('');
 
     } catch (error) {
- 
+
       if (error.response?.status === 404) {
- 
+
         setMessage('⚠️ Bookings feature is not available. Please check backend configuration.');
         setAllBookings([]);
         setBookingStats({});
 
       }
       else if (error.response?.status === 401) {
- 
+
         // DO NOT logout automatically
         setMessage('⚠️ Authentication issue detected. Please refresh if problem continues.');
 
@@ -133,22 +134,22 @@ const AdminPanel = () => {
 
   const loadPanditPerformance = async () => {
     try {
-     
+
       const { token } = authStorage.getAuth('admin');
       if (!token) {
-        
+
         return;
       }
 
       const data = await adminApi.getPanditPerformance();
-      
+
       setPanditPerformance(data.pandits || []);
     } catch (error) {
-      
+
 
       // Check if it's a 404 (endpoint not found)
       if (error.response?.status === 404) {
-       
+
         setPanditPerformance([]);
         setMessage('ℹ️ Pandit performance feature coming soon');
       } else {
@@ -160,22 +161,22 @@ const AdminPanel = () => {
   // Update loadRecentActivity similarly
   const loadRecentActivity = async () => {
     try {
-      
+
 
       const { token } = authStorage.getAuth('admin');
       if (!token) {
-         
+
         return;
       }
 
       const data = await adminApi.getRecentActivity();
-     
+
       setRecentActivity(data.activities || []);
     } catch (error) {
       console.error('Error loading recent activity:', error);
 
       if (error.response?.status === 404) {
-       
+
         setRecentActivity([]);
         setMessage('ℹ️ Recent activity feature coming soon');
       } else {
@@ -239,7 +240,7 @@ const AdminPanel = () => {
   }, []);
 
   const checkAuthentication = () => {
-   
+
 
     // Check BOTH storage locations
     const sessionToken = sessionStorage.getItem('adminToken');
@@ -259,7 +260,7 @@ const AdminPanel = () => {
       try {
         // Ensure both storages have the token (sync them)
         if (!sessionToken && localToken) {
-           
+
           sessionStorage.setItem('adminToken', localToken);
           sessionStorage.setItem('adminUser', localUser);
         }
@@ -267,13 +268,13 @@ const AdminPanel = () => {
         const parsedUser = JSON.parse(userData);
         setIsAuthenticated(true);
         setAdminUser(parsedUser);
-    
+
       } catch (error) {
-        
+
         handleLogout();
       }
     } else {
-     
+
       setIsAuthenticated(false);
     }
   };
@@ -285,7 +286,7 @@ const AdminPanel = () => {
   };
 
   const handleLogout = () => {
- 
+
 
     // Clear admin auth using authStorage
     authStorage.clearAuth('admin');
@@ -301,7 +302,7 @@ const AdminPanel = () => {
     setAdminUser(null);
 
     // Use window.location for hard redirect (always works)
- 
+
     window.location.href = '/admin-login';
   };
 
@@ -391,7 +392,7 @@ const AdminPanel = () => {
         }
       });
 
- 
+
 
       let result;
       if (editingItem) {
@@ -405,12 +406,12 @@ const AdminPanel = () => {
         result = await adminApi.createPandit(dataToSend);
         setMessage('✅ Pandit created successfully!');
       }
- 
+
       resetPanditForm();
       loadData(); // Reload the list
 
     } catch (error) {
-   
+
       setMessage('❌ Error: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);
@@ -423,32 +424,76 @@ const AdminPanel = () => {
     setMessage('');
 
     try {
- 
+      const formData = new FormData();
+
+      // ✅ Add all text fields
+      formData.append('name', serviceForm.name);
+      formData.append('description', serviceForm.description);
+      formData.append('purpose', serviceForm.purpose || '');
+      formData.append('price', serviceForm.price);
+      formData.append('category', serviceForm.category);
+      formData.append('duration', serviceForm.duration || '2-3 hours');
+      formData.append('details', JSON.stringify(serviceForm.details));
+
+      // ✅ CRITICAL: Handle image properly
+      if (serviceForm.image instanceof File) {
+        console.log('📸 Uploading image file:', serviceForm.image.name);
+        formData.append('serviceImage', serviceForm.image);
+      } else if (typeof serviceForm.image === 'string' && serviceForm.image.startsWith('data:image')) {
+        // If it's a base64 image (from camera/file preview)
+        const blob = dataURLtoBlob(serviceForm.image);
+        formData.append('serviceImage', blob, 'service-image.jpg');
+      } else if (typeof serviceForm.image === 'string' && serviceForm.image.includes('/uploads/')) {
+        // Existing image URL - keep it
+        formData.append('existingImage', serviceForm.image);
+      } else {
+        // No image - required field error
+        setMessage('❌ Please select an image for the service');
+        setLoading(false);
+        return;
+      }
+
+      // Debug: Log FormData contents
+      console.log('📤 Sending FormData:');
+      for (let pair of formData.entries()) {
+        console.log(`   ${pair[0]}: ${pair[1] instanceof File ? `File(${pair[1].name})` : pair[1]}`);
+      }
 
       let result;
       if (editingItem) {
-        result = await adminApi.updateService(editingItem._id, serviceForm);
+        result = await adminApi.updateService(editingItem._id, formData);
       } else {
-        result = await adminApi.createService(serviceForm);
+        result = await adminApi.createService(formData);
       }
- 
-      setMessage('✅ Service ' + (editingItem ? 'updated' : 'created') + ' successfully!');
 
+      console.log('✅ Service saved:', result);
+      setMessage('✅ Service ' + (editingItem ? 'updated' : 'created') + ' successfully!');
       resetServiceForm();
       loadData();
+
     } catch (error) {
       console.error('❌ Service operation failed:', error);
-      console.error('❌ Error response:', error.response?.data);
-
-      const errorMessage = error.response?.data?.errors
-        ? `Validation errors: ${error.response.data.errors.map(e => e.msg).join(', ')}`
-        : error.response?.data?.message || error.message;
-
+      const errorMessage = error.response?.data?.message || error.message;
       setMessage('❌ Error: ' + errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
+  // Helper function to convert dataURL to Blob
+  function dataURLtoBlob(dataURL) {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+
+
   const resetPanditForm = () => {
     setPanditForm({
       name: '',
@@ -484,7 +529,7 @@ const AdminPanel = () => {
   };
 
   const editPandit = (pandit) => {
- 
+
 
     // Generate username if missing
     let username = pandit.username;
@@ -493,7 +538,7 @@ const AdminPanel = () => {
         .replace(/\s+/g, '')
         .replace(/[^a-z0-9]/g, '')
         .substring(0, 15);
- 
+
     }
 
     setPanditForm({
@@ -637,13 +682,13 @@ const AdminPanel = () => {
       const { token } = authStorage.getAuth('admin');
 
       const statusParam = ticketFilter !== 'all' ? `?status=${ticketFilter}` : '';
-      const response = await fetch(`http://localhost:5000/api/admin/support-tickets${statusParam}`, {
+      const response = await fetch(buildUrl(`/api/admin/support-tickets${statusParam}`), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      const data = await response.json(); 
+      const data = await response.json();
       if (data.success) {
         setSupportTickets(data.tickets || []);
         setTicketStats(data.stats || {});
@@ -660,7 +705,7 @@ const AdminPanel = () => {
     try {
       const { token } = authStorage.getAuth('admin');
 
-      const response = await fetch(`http://localhost:5000/api/admin/support-tickets/${ticketId}/status`, {
+      const response = await fetch(buildUrl(`/api/admin/support-tickets/${ticketId}/status`), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -688,7 +733,7 @@ const AdminPanel = () => {
   const adminCancelBooking = async (bookingId, reason) => {
     // Prevent multiple simultaneous calls
     if (isCancelling) {
- 
+
       return;
     }
 
@@ -725,7 +770,7 @@ const AdminPanel = () => {
 
       const { token } = authStorage.getAuth('admin');
 
-      const response = await fetch(`http://localhost:5000/api/admin/bookings/${bookingId}/admin-cancel`, {
+      const response = await fetch(buildUrl(`/api/admin/bookings/${bookingId}/admin-cancel`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -773,10 +818,6 @@ const AdminPanel = () => {
     required
   />
 
-
-
-
-
   return (
     <div className="admin-panel">
       <ToastContainer
@@ -790,8 +831,8 @@ const AdminPanel = () => {
         draggable
         pauseOnHover
         theme="light"
-         style={{ zIndex: 9999 }}  // ✅ Add this
-  toastStyle={{ zIndex: 9999 }}
+        style={{ zIndex: 9999 }}  // ✅ Add this
+        toastStyle={{ zIndex: 9999 }}
       />
 
       {/* Add Admin Header with Logout */}
@@ -1350,53 +1391,38 @@ const AdminPanel = () => {
             </div>
 
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="service-image">Service Image *</label>
-                <input
-                  id="service-image"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      // Validate file type
-                      if (!file.type.startsWith('image/')) {
-                        setMessage('❌ Please select an image file');
-                        return;
-                      }
-                      // Validate file size (5MB)
-                      if (file.size > 5 * 1024 * 1024) {
-                        setMessage('❌ Image size should be less than 5MB');
-                        return;
-                      }
-                      setServiceForm({ ...serviceForm, image: file });
+            <div className="form-group">
+              <label htmlFor="service-image">Service Image *</label>
+              <input
+                id="service-image"
+                type="file"
+                accept="image/*"
+                required={!editingItem}  // Required for new services
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                      setMessage('❌ Please select an image file');
+                      e.target.value = ''; // Clear the input
+                      return;
                     }
-                  }}
-                />
-                {serviceForm.image && typeof serviceForm.image === 'string' && (
-                  <div className="current-image">
-                    <p>Current Image:</p>
-                    <img
-                      src={serviceForm.image}
-                      alt="Current service"
-                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
-                    />
-                  </div>
-                )}
-                {serviceForm.image instanceof File && (
-                  <div className="new-image-preview">
-                    <p>New Image Preview:</p>
-                    <img
-                      src={URL.createObjectURL(serviceForm.image)}
-                      alt="New service preview"
-                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
-                    />
-                    <p className="file-name">{serviceForm.image.name}</p>
-                  </div>
-                )}
-                <small className="file-hint">Supported formats: JPG, PNG, WebP. Max size: 5MB</small>
-              </div>
+                    // Validate file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                      setMessage('❌ Image size should be less than 5MB');
+                      e.target.value = '';
+                      return;
+                    }
+                    // Set the image as File object
+                    setServiceForm({ ...serviceForm, image: file });
+
+                    // Show preview
+                    const previewUrl = URL.createObjectURL(file);
+                    // You can store preview URL in state if needed
+                  }
+                }}
+              />
+
 
               <div className="form-group">
                 <label htmlFor="service-category">Category *</label>
@@ -2032,6 +2058,21 @@ const AdminPanel = () => {
           </div>
         </div>
       )}
+
+ {/* Image Preview */}
+  {serviceForm.image && (
+    <div className="image-preview">
+      <p>Image Preview:</p>
+      <img 
+        src={serviceForm.image instanceof File ? URL.createObjectURL(serviceForm.image) : serviceForm.image}
+        alt="Service preview"
+        style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+      />
+      {serviceForm.image instanceof File && (
+        <p className="file-name">{serviceForm.image.name}</p>
+      )}
+    </div>
+  )}
 
 
       {/* Booking Details Modal */}

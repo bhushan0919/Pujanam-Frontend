@@ -14,13 +14,14 @@ const api = axios.create({
 export const authStorage = {
   saveAuth: (role, token, data) => {
     if (!role || !token) return;
-    localStorage.setItem(`${role}_token`, token);
-    localStorage.setItem(`${role}_data`, JSON.stringify(data));
+    // Use consistent camelCase keys
+    localStorage.setItem(`${role}Token`, token);
+    localStorage.setItem(`${role}Data`, JSON.stringify(data));
   },
 
   getAuth: (role) => {
-    const token = localStorage.getItem(`${role}_token`);
-    const dataStr = localStorage.getItem(`${role}_data`);
+    const token = localStorage.getItem(`${role}Token`);
+    const dataStr = localStorage.getItem(`${role}Data`);
     let data = null;
     if (dataStr) {
       try { data = JSON.parse(dataStr); } catch { /* ignore */ }
@@ -28,14 +29,11 @@ export const authStorage = {
     return { token, data };
   },
 
-
   clearAuth: (role) => {
-    localStorage.removeItem(`${role}_token`);
-    localStorage.removeItem(`${role}_data`);
-
-    // Manually fire storage event so same-tab listeners (AuthContext) react
+    localStorage.removeItem(`${role}Token`);
+    localStorage.removeItem(`${role}Data`);
     window.dispatchEvent(new StorageEvent('storage', {
-      key: `${role}_token`,
+      key: `${role}Token`,
       oldValue: 'was_set',
       newValue: null,
       storageArea: localStorage,

@@ -214,27 +214,79 @@ export const adminApi = {
 
 
   // services
-  createService: async (serviceData) => {
-    const formData = new FormData();
-    Object.keys(serviceData).forEach((k) => {
-      if (k === "details" || k === "services") formData.append(k, JSON.stringify(serviceData[k]));
-      else if (k === "image" && serviceData[k] instanceof File) formData.append("serviceImage", serviceData[k]);
-      else formData.append(k, serviceData[k]);
+  // frontend/src/api/adminApi.js
+createService: async (serviceData) => {
+  // Don't set Content-Type header - let browser set it with boundary for FormData
+  const { token } = authStorage.getAuth('admin');
+  
+  if (!token) {
+    throw new Error('No admin token found');
+  }
+  
+  // If serviceData is already FormData, use it directly
+  const formData = serviceData instanceof FormData ? serviceData : (() => {
+    const fd = new FormData();
+    Object.keys(serviceData).forEach(key => {
+      if (key === 'details' && Array.isArray(serviceData[key])) {
+        fd.append(key, JSON.stringify(serviceData[key]));
+      } else if (key === 'image' && serviceData[key] instanceof File) {
+        fd.append('serviceImage', serviceData[key]);
+      } else if (key !== '_id' && key !== '__v' && serviceData[key] !== undefined && serviceData[key] !== null) {
+        fd.append(key, String(serviceData[key]));
+      }
     });
-    const res = await api.post(`${base}/services`, formData);
-    return res.data;
-  },
+    return fd;
+  })();
+  
+  const response = await fetch(buildUrl('/admin/services'), {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+      // ❌ DON'T set Content-Type here
+    },
+    body: formData
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create service');
+  }
+  
+  return response.json();
+},
 
-  updateService: async (id, serviceData) => {
-    const formData = new FormData();
-    Object.keys(serviceData).forEach((k) => {
-      if (k === "details" || k === "services") formData.append(k, JSON.stringify(serviceData[k]));
-      else if (k === "image" && serviceData[k] instanceof File) formData.append("serviceImage", serviceData[k]);
-      else formData.append(k, serviceData[k]);
+updateService: async (id, serviceData) => {
+  const { token } = authStorage.getAuth('admin');
+  
+  const formData = serviceData instanceof FormData ? serviceData : (() => {
+    const fd = new FormData();
+    Object.keys(serviceData).forEach(key => {
+      if (key === 'details' && Array.isArray(serviceData[key])) {
+        fd.append(key, JSON.stringify(serviceData[key]));
+      } else if (key === 'image' && serviceData[key] instanceof File) {
+        fd.append('serviceImage', serviceData[key]);
+      } else if (key !== '_id' && key !== '__v' && serviceData[key] !== undefined && serviceData[key] !== null) {
+        fd.append(key, String(serviceData[key]));
+      }
     });
-    const res = await api.put(`${base}/services/${id}`, formData);
-    return res.data;
-  },
+    return fd;
+  })();
+  
+  const response = await fetch(buildUrl(`/admin/services/${id}`), {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update service');
+  }
+  
+  return response.json();
+},
 
   deleteService: async (id) => {
     const res = await api.delete(`${base}/services/${id}`);
