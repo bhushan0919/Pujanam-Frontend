@@ -1,14 +1,14 @@
-// UPDATE for production
+// Frontend/src/config.js
 const getApiUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (envUrl) return envUrl;
-  
-  // IMPORTANT: Change this to your Render backend URL
+  // Production: use environment variable from Netlify
   if (import.meta.env.PROD) {
-    return 'https://pujanam-backend.onrender.com/api';  // ← CHANGE THIS
+    // Make sure your Netlify env var is set to: https://pujanam-backend.onrender.com/api
+    // WITHOUT trailing slash
+    return import.meta.env.VITE_API_BASE_URL || 'https://pujanam-backend.onrender.com/api';
   }
   
-  return 'http://localhost:5000';
+  // Development
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 };
 
 export const API_CONFIG = {
