@@ -1,0 +1,360 @@
+/* frontend/src/styles/JoinPandit.css */
+
+.join-pandit-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background decoration */
+.join-pandit-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: subtleMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes subtleMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Main Form Card */
+.form-card {
+  max-width: 580px;
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  padding: 48px 40px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.5s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header Section */
+.form-card h2 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-card p {
+  color: #666;
+  margin-bottom: 32px;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Form Fields */
+.form-card input,
+.form-card textarea {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: #fafafa;
+  font-family: inherit;
+}
+
+.form-card textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.form-card input:focus,
+.form-card textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.form-card input:hover:not(:disabled),
+.form-card textarea:hover:not(:disabled) {
+  border-color: #b0b0b0;
+  background: white;
+}
+
+.form-card input:disabled,
+.form-card textarea:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Floating Label Effect (Optional - add to JSX for better UX) */
+.form-card .input-group {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.form-card .input-group input {
+  margin-bottom: 0;
+}
+
+/* Submit Button */
+.form-card button {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.form-card button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.form-card button:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.form-card button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.form-card button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.form-card button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Message Alerts */
+.error-message {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  border-left: 4px solid #dc3545;
+  animation: shake 0.5s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 18px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.success-message {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  border-left: 4px solid #28a745;
+  animation: slideDown 0.5s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-message::before {
+  content: '✅';
+  font-size: 18px;
+}
+
+/* Note Section */
+.note {
+  font-size: 12px;
+  color: #999;
+  margin-top: 24px;
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+  line-height: 1.5;
+}
+
+.note::before {
+  content: '📌 ';
+  font-size: 12px;
+}
+
+/* Loading Spinner (if needed) */
+.form-card .loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .join-pandit-container {
+    padding: 40px 16px;
+  }
+  
+  .form-card {
+    padding: 32px 24px;
+  }
+  
+  .form-card h2 {
+    font-size: 26px;
+  }
+  
+  .form-card input,
+  .form-card textarea {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .form-card button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card {
+    padding: 24px 20px;
+  }
+  
+  .form-card h2 {
+    font-size: 24px;
+  }
+  
+  .form-card p {
+    font-size: 13px;
+  }
+  
+  .error-message,
+  .success-message {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Input with validation states */
+.form-card input.error,
+.form-card textarea.error {
+  border-color: #dc3545;
+  background: #fff8f8;
+}
+
+.form-card input.valid,
+.form-card textarea.valid {
+  border-color: #28a745;
+  background: #f8fff8;
+}
+
+/* Field hint text */
+.field-hint {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+
+/* Character counter for textarea */
+.char-counter {
+  text-align: right;
+  font-size: 11px;
+  color: #999;
+  margin-top: -12px;
+  margin-bottom: 16px;
+}
+
+/* Print styles */
+@media print {
+  .join-pandit-container {
+    background: white;
+    padding: 0;
+  }
+  
+  .form-card {
+    box-shadow: none;
+    padding: 20px;
+  }
+  
+  .form-card button {
+    display: none;
+  }
+}

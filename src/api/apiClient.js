@@ -83,6 +83,9 @@ const verifyTokenBeforeRequest = (config) => {
   } else if (config.url?.startsWith('/user/')) {
     authType = 'user';
     token = authStorage.getAuth('user').token;
+  } else if (config.url === '/free-astro/kundali' && config.method === 'post') {
+    authType = 'user';
+    token = authStorage.getAuth('user').token;
   } else if (config.url?.startsWith('/bookings') && config.method !== 'post') {
     authType = 'user';
     token = authStorage.getAuth('user').token;
@@ -146,25 +149,45 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // Only logout for actual 401 authentication errors
     if (error.response?.status === 401) {
       const url = error.config?.url || '';
       let authType = null;
 
       if (url.startsWith('/admin/')) authType = 'admin';
       else if (url.startsWith('/pandit/')) authType = 'pandit';
-      else if (url.startsWith('/user/') || url.startsWith('/bookings')) authType = 'user';
+      else if (url.startsWith('/user/') || url.startsWith('/bookings') || url === '/free-astro/kundali') authType = 'user';
 
       if (authType) {
-        // clearAuth fires storage event → AuthContext clears React state
-        authStorage.clearAuth(authType);
-
-        const redirectMap = { admin: '/admin-login', pandit: '/pandit-login', user: '/user/login' };
-        const isOnProtectedPage =
-          window.location.pathname.startsWith(`/${authType}`) ||
-          window.location.pathname.startsWith('/user/dashboard');
-
-        if (isOnProtectedPage) {
-          window.location.href = redirectMap[authType];
+        // Check if it's a real token expiry or just a temporary issue
+        const { token } = authStorage.getAuth(authType);
+        
+        if (token) {
+          try {
+            // Check if token is actually expired
+            const { exp } = JSON.parse(atob(token.split('.')[1]));
+            const isExpired = Date.now() >= exp * 1000;
+            
+            if (isExpired) {
+              // Only logout if token is truly expired
+              console.log(`🕐 Token expired for ${authType}, logging out...`);
+              authStorage.clearAuth(authType);
+              
+              const redirectMap = { admin: '/admin-login', pandit: '/pandit-login', user: '/user/login' };
+              const isOnProtectedPage =
+                window.location.pathname.startsWith(`/${authType}`) ||
+                window.location.pathname.startsWith('/user/dashboard');
+              
+              if (isOnProtectedPage) {
+                window.location.href = redirectMap[authType];
+              }
+            } else {
+              // Token is still valid, don't logout
+              console.log(`⚠️ 401 error but token still valid for ${authType}, not logging out`);
+            }
+          } catch (parseError) {
+            console.error('Error parsing token:', parseError);
+          }
         }
       }
     }

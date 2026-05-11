@@ -796,7 +796,7 @@ input.error, textarea.error, select.error {
 }
 
 .modal-content {
-    background: white;
+    background: rgb(224, 81, 81);
     border-radius: var(--border-radius-xl);
     padding: 2rem;
     max-width: 90%;
@@ -813,7 +813,7 @@ input.error, textarea.error, select.error {
 
 .payment-modal p {
     margin-bottom: 1rem;
-    color: var(--text-secondary);
+    color: black;
 }
 
 .total-amount, .advance-amount {
@@ -868,3 +868,10 @@ input.error, textarea.error, select.error {
     }
 }
 
+
+.payment-btn{
+    color: green;
+}
+.cancel-btn{
+    color: red;
+}

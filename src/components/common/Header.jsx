@@ -121,6 +121,7 @@ return (
           <li><Link to="/" className="nav-link" onClick={closeMenus}>Home</Link></li>
           <li><Link to="/services" className="nav-link" onClick={closeMenus}>Services</Link></li>
           <li><Link to="/find-pandit" className="nav-link" onClick={closeMenus}>Find Pandit</Link></li>
+          <li><Link to="/astro-services" className="nav-link" onClick={closeMenus}>Astro Services</Link></li>
           <li><Link to="/contact" className="nav-link" onClick={closeMenus}>Contact</Link></li>
         </ul>
 

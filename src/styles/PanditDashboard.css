@@ -2102,3 +2102,340 @@ justify-content: center;
   color: #666;
   font-size: 12px;
 }
+
+
+
+/* Profile Modal - Fixed CSS */
+.profile-modal {
+  max-width: 450px;
+  width: 90%;
+  border-radius: 16px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Limit modal height to 90% of viewport */
+  position: relative;
+}
+
+/* Modal Header - Fixed at top */
+.profile-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #eee;
+  background: white;
+  border-radius: 16px 16px 0 0;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+/* Modal Body - Scrollable area */
+.profile-modal .modal-body {
+  padding: 20px 24px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  flex: 1; /* Take remaining space */
+  max-height: calc(90vh - 140px); /* Adjust based on header + footer height */
+}
+
+/* Modal Actions - Fixed at bottom */
+.profile-modal .modal-actions {
+  padding: 16px 24px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: white;
+  border-radius: 0 0 16px 16px;
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  position: sticky;
+  bottom: 0;
+}
+
+.profile-image-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.avatar-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #667eea;
+}
+
+.upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #667eea;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.upload-btn:hover {
+  background: #5a67d8;
+  transform: scale(1.1);
+}
+
+.upload-hint {
+  font-size: 11px;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* Form Groups */
+.profile-modal .form-group {
+  margin-bottom: 20px;
+}
+
+.profile-modal .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.profile-modal .form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.profile-modal .form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* Password Section */
+.password-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.password-section h4 {
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Buttons */
+.edit-profile-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.edit-profile-btn:hover {
+  background: #5a67d8;
+}
+
+.profile-modal .btn-save {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.profile-modal .btn-save:hover {
+  background: #218838;
+}
+
+.profile-modal .btn-save:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.profile-modal .btn-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.profile-modal .btn-cancel:hover {
+  background: #5a6268;
+}
+
+/* Password Toggle Section */
+.password-toggle-section {
+  margin: 20px 0 10px;
+}
+
+.toggle-password-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.toggle-password-btn:hover {
+  background: #f0f0f0;
+  border-color: #667eea;
+}
+
+.required {
+  color: #dc3545;
+  font-size: 12px;
+}
+
+.password-hint {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Password section styling */
+.password-section {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Astro Consultations Styles */
+.astro-consultations-content {
+  padding: 20px;
+}
+
+.astro-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.astro-tabs button {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.astro-tabs button.active {
+  background: #667eea;
+  color: white;
+}
+
+.astro-consultation-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s;
+}
+
+.astro-consultation-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.consultation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.service-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.service-icon {
+  font-size: 28px;
+}
+
+.service-info h4 {
+  margin: 0;
+  color: #333;
+}
+
+.consultation-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.consultation-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.consultation-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-section h4 {
+  margin-bottom: 10px;
+  color: #667eea;
+}

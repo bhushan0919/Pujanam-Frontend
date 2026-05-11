@@ -1,5 +1,4 @@
 // Frontend/src/components/admin/AdminPanel.jsx
-
 import React, { useState, useEffect } from 'react';
 import { panditApi } from '../../api/panditApi';
 import { serviceApi } from '../../api/serviceApi';
@@ -10,7 +9,7 @@ import { bookingApi } from '../../api/bookingApi';
 import LoadingSpinner from '../common/LoadingSpinner';
 import '../../styles/AdminPanel.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faMagnifyingGlass, faScrewdriverWrench, faBook, faUserCheck, faHeadset, faCalendar, faNewspaper, faUserPlus, faCircleXmark, faPlus, faHeadSideCough, faPager, faParagraph, faLocation, faLocationDot, faEnvelope, faPhone, faStar, faGraduationCap, faPencil, faTrash, faCheck, faRupee, faRupeeSign, faIndianRupeeSign, faClock, faFile, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faMagnifyingGlass, faScrewdriverWrench, faBook, faTimes, faUserCheck, faHeadset, faCalendar, faNewspaper, faUserPlus, faCircleXmark, faPlus, faHeadSideCough, faPager, faParagraph, faLocation, faLocationDot, faEnvelope, faPhone, faStar, faGraduationCap, faPencil, faTrash, faCheck, faRupee, faRupeeSign, faIndianRupeeSign, faClock, faFile, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { buildUrl } from '../../config';
@@ -53,6 +52,15 @@ const AdminPanel = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [ticketFilter, setTicketFilter] = useState('all');
   const [isCancelling, setIsCancelling] = useState(false);
+  const [availableServices, setAvailableServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [applicationStats, setApplicationStats] = useState({});
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [applicationFilter, setApplicationFilter] = useState('pending');
+  const [loadingApplications, setLoadingApplications] = useState(false);
+  const [adminNotes, setAdminNotes] = useState('');
+  const [processingApplication, setProcessingApplication] = useState(false);
 
 
 
@@ -74,6 +82,40 @@ const AdminPanel = () => {
     }
 
   }, [activeTab, filters]);
+
+  useEffect(() => {
+    loadAvailableServices();
+  }, []);
+  // Add this with other useEffect hooks
+useEffect(() => {
+  if (activeTab === 'applications') {
+    console.log('📋 Applications tab activated, loading data...');
+    loadApplications();
+  }
+}, [activeTab]); // Only reload when tab changes
+
+// Also add this to reload when filter changes
+useEffect(() => {
+  if (activeTab === 'applications') {
+    console.log(`🔄 Filter changed to: ${applicationFilter}, reloading...`);
+    loadApplications();
+  }
+}, [applicationFilter]); // Reload when filter changes
+
+  // Function to load services for dropdown
+  const loadAvailableServices = async () => {
+    try {
+      setLoadingServices(true);
+      const services = await serviceApi.getAllServices();
+      console.log('📋 Loaded services for dropdown:', services.length);
+      setAvailableServices(services);
+    } catch (error) {
+      console.error('❌ Error loading services:', error);
+      setAvailableServices([]);
+    } finally {
+      setLoadingServices(false);
+    }
+  };
 
   // Load booking data
   const loadAllBookings = async () => {
@@ -185,6 +227,31 @@ const AdminPanel = () => {
     }
   };
 
+
+  const resendPanditCredentials = async (panditId) => {
+    try {
+      const { token } = authStorage.getAuth('admin');
+      const response = await fetch(buildUrl(`/admin/pandits/${panditId}/resend-credentials`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success('Credentials resent successfully!');
+      } else {
+        toast.error('Failed to resend: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error resending credentials:', error);
+      toast.error('Failed to resend credentials');
+    }
+  };
+
   // Load analytics
   const loadAnalytics = async () => {
     try {
@@ -240,44 +307,86 @@ const AdminPanel = () => {
   }, []);
 
   const checkAuthentication = () => {
-
-
-    // Check BOTH storage locations
-    const sessionToken = sessionStorage.getItem('adminToken');
-    const sessionUser = sessionStorage.getItem('adminUser');
-
-    const localToken = localStorage.getItem('adminToken');
-    const localUser = localStorage.getItem('adminUser');
-
-    console.log('   sessionStorage token:', !!sessionToken);
-    console.log('   localStorage token:', !!localToken);
-
-    // Use whichever token exists
-    const token = sessionToken || localToken;
-    const userData = sessionUser || localUser;
-
-    if (token && userData) {
+  const { token, data } = authStorage.getAuth('admin');
+  
+  console.log('🔍 Checking admin authentication...');
+  console.log('   Token exists:', !!token);
+  
+  if (!token) {
+    console.log('❌ No token found, redirecting to login');
+    setIsAuthenticated(false);
+    return;
+  }
+  
+  // Check if token is expired
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const isExpired = Date.now() >= payload.exp * 1000;
+    
+    if (isExpired) {
+      console.log('🕐 Token expired, redirecting to login');
+      authStorage.clearAuth('admin');
+      setIsAuthenticated(false);
+      window.location.href = '/admin-login';
+      return;
+    }
+    
+    // Token is valid
+    console.log('✅ Token valid, expires in:', 
+      Math.round((payload.exp * 1000 - Date.now()) / 1000 / 60 / 60), 'hours');
+    
+    if (data) {
       try {
-        // Ensure both storages have the token (sync them)
-        if (!sessionToken && localToken) {
-
-          sessionStorage.setItem('adminToken', localToken);
-          sessionStorage.setItem('adminUser', localUser);
-        }
-
-        const parsedUser = JSON.parse(userData);
+        const parsedUser = typeof data === 'string' ? JSON.parse(data) : data;
         setIsAuthenticated(true);
         setAdminUser(parsedUser);
-
       } catch (error) {
-
-        handleLogout();
+        console.error('Error parsing user data:', error);
+        setIsAuthenticated(true);
+        setAdminUser(data);
       }
     } else {
+      setIsAuthenticated(true);
+    }
+  } catch (error) {
+    console.error('Error checking token:', error);
+    setIsAuthenticated(false);
+  }
+};
 
-      setIsAuthenticated(false);
+// Add session timer display (optional)
+const [sessionTimeLeft, setSessionTimeLeft] = useState('');
+
+useEffect(() => {
+  const updateSessionTimer = () => {
+    const { token } = authStorage.getAuth('admin');
+    if (!token) {
+      setSessionTimeLeft('');
+      return;
+    }
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const remaining = payload.exp * 1000 - Date.now();
+      
+      if (remaining > 0) {
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        setSessionTimeLeft(`${hours}h ${minutes}m`);
+      } else {
+        setSessionTimeLeft('Expired');
+      }
+    } catch (e) {
+      setSessionTimeLeft('');
     }
   };
+  
+  updateSessionTimer();
+  const interval = setInterval(updateSessionTimer, 60000); // Update every minute
+  
+  return () => clearInterval(interval);
+}, [isAuthenticated]);
+
 
   const handleLogin = (user) => {
     setIsAuthenticated(true);
@@ -370,49 +479,59 @@ const AdminPanel = () => {
 
 
   // In handlePanditSubmit, don't send password when updating
+  // AdminPanel.jsx - REPLACE handlePanditSubmit function
   const handlePanditSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
     try {
-      // Create a copy with required fields
-      const dataToSend = {
-        ...panditForm,
-        // Ensure password is always included for creation
-        password: panditForm.password || 'pandit123',
-        // Ensure username is generated if missing
-        username: panditForm.username || generateUsername(panditForm.name)
-      };
+      const dataToSend = { ...panditForm };
 
-      // Remove any undefined or null values
+      if (editingItem && dataToSend.password === '********') {
+        delete dataToSend.password;
+      }
+
+      if (!editingItem && !dataToSend.password) {
+        dataToSend.password = 'pandit123';
+      }
+
+      if (!dataToSend.username) {
+        dataToSend.username = generateUsername(dataToSend.name);
+      }
+
       Object.keys(dataToSend).forEach(key => {
         if (dataToSend[key] === undefined || dataToSend[key] === null) {
           delete dataToSend[key];
         }
       });
 
-
-
       let result;
       if (editingItem) {
-        // For updates, we might not want to send password if it's the default
-        if (dataToSend.password === 'pandit123') {
-          delete dataToSend.password; // Don't update password if it's default
-        }
         result = await adminApi.updatePandit(editingItem._id, dataToSend);
         setMessage('✅ Pandit updated successfully!');
       } else {
         result = await adminApi.createPandit(dataToSend);
-        setMessage('✅ Pandit created successfully!');
+        // Show detailed success message including email
+        if (result.success && result.message) {
+          setMessage(`✅ ${result.message}`);
+        } else {
+          setMessage(`✅ Pandit created successfully! Welcome email sent to ${dataToSend.email}`);
+        }
       }
 
       resetPanditForm();
-      loadData(); // Reload the list
+      loadData();
+      setEditingItem(null);
+
+      // Show toast notification for better UX
+      toast.success(editingItem ? 'Pandit updated successfully!' : 'Pandit created and email sent!');
 
     } catch (error) {
-
-      setMessage('❌ Error: ' + (error.message || 'Unknown error'));
+      console.error('❌ Error:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      setMessage(`❌ Error: ${errorMsg}`);
+      toast.error(`Failed to ${editingItem ? 'update' : 'create'} pandit`);
     } finally {
       setLoading(false);
     }
@@ -498,7 +617,7 @@ const AdminPanel = () => {
     setPanditForm({
       name: '',
       username: '',
-      password: 'pandit123', // Always include default password
+      password: 'pandit123',
       location: '',
       services: [],
       contact: '',
@@ -510,7 +629,7 @@ const AdminPanel = () => {
     });
     setNewService('');
     setNewLanguage('');
-    setEditingItem(null);
+    setEditingItem(null); // Clear editing item
   };
 
   const resetServiceForm = () => {
@@ -528,8 +647,11 @@ const AdminPanel = () => {
     setEditingItem(null);
   };
 
+  // AdminPanel.jsx - REPLACE the editPandit function
   const editPandit = (pandit) => {
-
+    console.log('✏️ Editing pandit:', pandit.name);
+    console.log('   Services:', pandit.services);
+    console.log('   Languages:', pandit.languages);
 
     // Generate username if missing
     let username = pandit.username;
@@ -538,15 +660,15 @@ const AdminPanel = () => {
         .replace(/\s+/g, '')
         .replace(/[^a-z0-9]/g, '')
         .substring(0, 15);
-
     }
 
+    // Set form state with ALL existing data
     setPanditForm({
       name: pandit.name || '',
-      username: username,
-      password: '********', // Don't show actual password, just placeholder
+      username: pandit.username || generateUsername(pandit.name),
+      password: '********',
       location: pandit.location || '',
-      services: pandit.services || [],
+      services: pandit.services || [], // This should already be an array
       contact: pandit.contact || '',
       email: pandit.email || '',
       rating: pandit.rating || 0,
@@ -554,7 +676,16 @@ const AdminPanel = () => {
       languages: pandit.languages || [],
       image: pandit.image || '/images/icon.png'
     });
+
+    // Also set the newService and newLanguage if needed for display
+    setNewService('');
+    setNewLanguage('');
+
+    // Set editing item
     setEditingItem(pandit);
+
+    // Scroll to form
+    document.getElementById('pandit-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const editService = (service) => {
@@ -801,6 +932,178 @@ const AdminPanel = () => {
   };
 
 
+  // Add these functions to AdminPanel.jsx
+
+  // Load all pandit applications
+
+  const loadApplications = async () => {
+    try {
+      setLoadingApplications(true);
+      setError(''); // Clear any previous errors
+
+      const { token } = authStorage.getAuth('admin');
+
+      if (!token) {
+        console.error('No admin token found');
+        setError('Authentication failed. Please login again.');
+        return;
+      }
+
+      // Build URL with status filter
+      let url = '/application/applications';
+      if (applicationFilter && applicationFilter !== 'all') {
+        url += `?status=${applicationFilter}`;
+      }
+
+      console.log('📡 Fetching applications from:', url);
+      console.log('   Filter:', applicationFilter);
+
+      const response = await fetch(buildUrl(url), {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      console.log('📊 Response:', data);
+
+      if (data.success) {
+        setApplications(data.applications || []);
+        setApplicationStats(data.stats || {
+          total: 0,
+          pending: 0,
+          approved: 0,
+          rejected: 0
+        });
+        console.log(`✅ Loaded ${data.applications?.length || 0} applications`);
+      } else {
+        console.error('Failed to load applications:', data.message);
+        setError(data.message || 'Failed to load applications');
+        setApplications([]);
+      }
+    } catch (error) {
+      console.error('Error loading applications:', error);
+      setError('Network error. Please try again.');
+      setApplications([]);
+    } finally {
+      setLoadingApplications(false);
+    }
+  };
+
+  // Approve application
+  const approveApplication = async (applicationId) => {
+    const notes = prompt('Add any notes for the applicant (optional):');
+
+    if (!confirm('Are you sure you want to approve this application? An email notification will be sent to the applicant.')) {
+      return;
+    }
+
+    setProcessingApplication(true);
+
+    try {
+      const { token } = authStorage.getAuth('admin');
+      const response = await fetch(buildUrl(`/application/applications/${applicationId}/approve`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ adminNotes: notes || '' })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Application approved! Email sent to applicant.');
+        loadApplications(); // Refresh list
+        setSelectedApplication(null);
+      } else {
+        alert('❌ Failed to approve: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error approving application:', error);
+      alert('Error approving application');
+    } finally {
+      setProcessingApplication(false);
+    }
+  };
+
+  // Reject application
+  const rejectApplication = async (applicationId) => {
+    const notes = prompt('Reason for rejection (required):');
+
+    if (!notes) {
+      alert('Please provide a reason for rejection.');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to reject this application? An email notification will be sent to the applicant.')) {
+      return;
+    }
+
+    setProcessingApplication(true);
+
+    try {
+      const { token } = authStorage.getAuth('admin');
+      const response = await fetch(buildUrl(`/application/applications/${applicationId}/reject`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ adminNotes: notes })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('❌ Application rejected. Email sent to applicant.');
+        loadApplications(); // Refresh list
+        setSelectedApplication(null);
+      } else {
+        alert('Failed to reject: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+      alert('Error rejecting application');
+    } finally {
+      setProcessingApplication(false);
+    }
+  };
+
+  // Delete application
+  const deleteApplication = async (applicationId) => {
+    if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { token } = authStorage.getAuth('admin');
+      const response = await fetch(buildUrl(`/application/applications/${applicationId}`), {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Application deleted successfully');
+        loadApplications(); // Refresh list
+        setSelectedApplication(null);
+      } else {
+        alert('Failed to delete: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      alert('Error deleting application');
+    }
+  };
+
+
   // Also update the name field to auto-generate username:
   <input
     id="pandit-name"
@@ -874,6 +1177,16 @@ const AdminPanel = () => {
           onClick={() => setActiveTab('support')}
         >
           <FontAwesomeIcon icon={faHeadset} /> Support Tickets ({ticketStats.open || 0})
+        </button>
+
+        <button
+          className={activeTab === 'applications' ? 'active' : ''}
+          onClick={() => {
+            setActiveTab('applications');
+            loadApplications();
+          }}
+        >
+          <FontAwesomeIcon icon={faUserPlus} /> Pandit Applications ({applicationStats.pending || 0})
         </button>
       </div>
 
@@ -971,7 +1284,7 @@ const AdminPanel = () => {
             </button>
           </div>
 
-          <form onSubmit={handlePanditSubmit} className="admin-form">
+          <form onSubmit={handlePanditSubmit} id="pandit-form" className="admin-form">
             <div className="form-group">
               <label htmlFor="pandit-name">Full Name *</label>
               <input
@@ -1093,12 +1406,10 @@ const AdminPanel = () => {
                   onChange={(e) => {
                     const file = e.target.files[0];
                     if (file) {
-                      // Validate file type
                       if (!file.type.startsWith('image/')) {
                         setMessage('❌ Please select an image file');
                         return;
                       }
-                      // Validate file size (5MB)
                       if (file.size > 5 * 1024 * 1024) {
                         setMessage('❌ Image size should be less than 5MB');
                         return;
@@ -1107,7 +1418,9 @@ const AdminPanel = () => {
                     }
                   }}
                 />
-                {panditForm.image && typeof panditForm.image === 'string' && (
+
+                {/* Show current image when editing */}
+                {editingItem && panditForm.image && typeof panditForm.image === 'string' && (
                   <div className="current-image">
                     <p>Current Image:</p>
                     <img
@@ -1115,8 +1428,11 @@ const AdminPanel = () => {
                       alt="Current pandit"
                       style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
                     />
+                    <small className="file-hint">Upload a new image to replace</small>
                   </div>
                 )}
+
+                {/* Show preview for newly selected image */}
                 {panditForm.image instanceof File && (
                   <div className="new-image-preview">
                     <p>New Image Preview:</p>
@@ -1128,83 +1444,77 @@ const AdminPanel = () => {
                     <p className="file-name">{panditForm.image.name}</p>
                   </div>
                 )}
-                <small className="file-hint">
-                  Supported formats: JPG, PNG, WebP. Max size: 5MB.
-                  {!panditForm.image && " Leave empty for default icon."}
-                </small>
               </div>
             </div>
 
             <div className="array-input">
               <label htmlFor="pandit-services">Services Offered *</label>
-              <div className="array-controls">
-                <input
-                  id="pandit-services"
-                  type="text"
-                  placeholder="Add a service (e.g., Satya Narayan Puja)"
-                  value={newService}
-                  onChange={(e) => setNewService(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addService();
-                    }
-                  }}
-                />
-                <button type="button" onClick={addService} className="btn-add">
-                  <FontAwesomeIcon icon={faPlus} />Add
-                </button>
-              </div>
-              <div className="array-items">
-                {panditForm.services.map((service, index) => (
-                  <span key={index} className="array-item">
-                    <FontAwesomeIcon icon={faScrewdriverWrench} /> {service}
-                    <button
-                      type="button"
-                      onClick={() => removeArrayItem('services', index, setPanditForm, panditForm)}
-                      aria-label={`Remove ${service}`}
-                    >
-                      <FontAwesomeIcon icon={faCircleXmark} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
 
-            <div className="array-input">
-              <label htmlFor="pandit-languages">Languages Known</label>
-              <div className="array-controls">
-                <input
-                  id="pandit-languages"
-                  type="text"
-                  placeholder="Add a language (e.g., Hindi, English)"
-                  value={newLanguage}
-                  onChange={(e) => setNewLanguage(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addLanguage();
+              {/* Dropdown to select services */}
+              <div className="services-dropdown-container">
+                <select
+                  id="pandit-services"
+                  value=""
+                  onChange={(e) => {
+                    const selectedService = e.target.value;
+                    if (selectedService && !panditForm.services.includes(selectedService)) {
+                      setPanditForm({
+                        ...panditForm,
+                        services: [...panditForm.services, selectedService]
+                      });
                     }
+                    // Reset select to default after selection
+                    e.target.value = "";
                   }}
-                />
-                <button type="button" onClick={addLanguage} className="btn-add">
-                  <FontAwesomeIcon icon={faPlus} />Add
-                </button>
-              </div>
-              <div className="array-items">
-                {panditForm.languages.map((language, index) => (
-                  <span key={index} className="array-item">
-                    <FontAwesomeIcon icon={faHeadSideCough} />Add {language}
-                    <button
-                      type="button"
-                      onClick={() => removeArrayItem('languages', index, setPanditForm, panditForm)}
-                      aria-label={`Remove ${language}`}
+                  className="services-select"
+                  disabled={loadingServices}
+                >
+                  <option value="">-- Select a service from the list --</option>
+                  {availableServices.map((service) => (
+                    <option
+                      key={service._id}
+                      value={service.name}
+                      disabled={panditForm.services.includes(service.name)}
                     >
-                      <FontAwesomeIcon icon={faCircleXmark} />
-                    </button>
-                  </span>
-                ))}
+                      {service.name} {panditForm.services.includes(service.name) ? '(Already added)' : ''}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Optional: Show loading state */}
+                {loadingServices && <span className="loading-text">Loading services...</span>}
+
+                {/* Optional: Show message if no services exist */}
+                {!loadingServices && availableServices.length === 0 && (
+                  <div className="warning-message">
+                    ⚠️ No services found. Please add services first in the "Manage Services" tab.
+                  </div>
+                )}
               </div>
+
+              {/* Display selected services as chips */}
+              <div className="array-items">
+                {panditForm.services.length === 0 ? (
+                  <span className="array-item empty">No services selected yet</span>
+                ) : (
+                  panditForm.services.map((service, index) => (
+                    <span key={index} className="array-item">
+                      <FontAwesomeIcon icon={faScrewdriverWrench} /> {service}
+                      <button
+                        type="button"
+                        onClick={() => removeArrayItem('services', index, setPanditForm, panditForm)}
+                        aria-label={`Remove ${service}`}
+                      >
+                        <FontAwesomeIcon icon={faCircleXmark} />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+
+              <small className="field-hint">
+                Select services from the dropdown. These must match the services available in the system.
+              </small>
             </div>
 
             <div className="form-actions">
@@ -1254,6 +1564,13 @@ const AdminPanel = () => {
                       <div className="item-actions">
                         <button onClick={() => editPandit(pandit)} className="btn-edit">
                           <FontAwesomeIcon icon={faPencil} /> Edit
+                        </button>
+                        <button
+                          onClick={() => resendPanditCredentials(pandit._id)}
+                          className="btn-resend"
+                          title="Resend login credentials via email"
+                        >
+                          <FontAwesomeIcon icon={faEnvelope} /> Resend Email
                         </button>
                         <button
                           onClick={() => togglePanditAvailability(pandit._id)}
@@ -2059,20 +2376,20 @@ const AdminPanel = () => {
         </div>
       )}
 
- {/* Image Preview */}
-  {serviceForm.image && (
-    <div className="image-preview">
-      <p>Image Preview:</p>
-      <img 
-        src={serviceForm.image instanceof File ? URL.createObjectURL(serviceForm.image) : serviceForm.image}
-        alt="Service preview"
-        style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
-      />
-      {serviceForm.image instanceof File && (
-        <p className="file-name">{serviceForm.image.name}</p>
+      {/* Image Preview */}
+      {serviceForm.image && (
+        <div className="image-preview">
+          <p>Image Preview:</p>
+          <img
+            src={serviceForm.image instanceof File ? URL.createObjectURL(serviceForm.image) : serviceForm.image}
+            alt="Service preview"
+            style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+          />
+          {serviceForm.image instanceof File && (
+            <p className="file-name">{serviceForm.image.name}</p>
+          )}
+        </div>
       )}
-    </div>
-  )}
 
 
       {/* Booking Details Modal */}
@@ -2246,10 +2563,269 @@ const AdminPanel = () => {
         </div>
       )}
 
+
+
+
+
+      {/* Pandit Applications Tab */}
+      {activeTab === 'applications' && (
+        <div className="admin-applications-section">
+          <div className="section-header">
+            <h2><FontAwesomeIcon icon={faUserPlus} /> Pandit Applications</h2>
+            <div className="application-filters">
+              <button
+                className={applicationFilter === 'pending' ? 'active' : ''}
+                onClick={() => {
+                  console.log('🔄 Filter changed to: pending');
+                  setApplicationFilter('pending');
+                  setApplications([]); // Clear current data
+                  // Use setTimeout to ensure state is updated before fetching
+                  setTimeout(() => {
+                    loadApplications();
+                  }, 0);
+                }}
+              >
+                Pending ({applicationStats.pending || 0})
+              </button>
+              <button
+                className={applicationFilter === 'approved' ? 'active' : ''}
+                onClick={() => {
+                  console.log('🔄 Filter changed to: approved');
+                  setApplicationFilter('approved');
+                  setApplications([]);
+                  setTimeout(() => {
+                    loadApplications();
+                  }, 0);
+                }}
+              >
+                Approved ({applicationStats.approved || 0})
+              </button>
+              <button
+                className={applicationFilter === 'rejected' ? 'active' : ''}
+                onClick={() => {
+                  console.log('🔄 Filter changed to: rejected');
+                  setApplicationFilter('rejected');
+                  setApplications([]);
+                  setTimeout(() => {
+                    loadApplications();
+                  }, 0);
+                }}
+              >
+                Rejected ({applicationStats.rejected || 0})
+              </button>
+              <button
+                className={applicationFilter === 'all' ? 'active' : ''}
+                onClick={() => {
+                  console.log('🔄 Filter changed to: all');
+                  setApplicationFilter('all');
+                  setApplications([]);
+                  setTimeout(() => {
+                    loadApplications();
+                  }, 0);
+                }}
+              >
+                All ({applicationStats.total || 0})
+              </button>
+            </div>
+          </div>
+
+            
+          {loadingApplications ? (
+            <div className="loading">Loading applications...</div>
+          ) : applications.length === 0 ? (
+            <div className="no-data">
+              <p>No applications found</p>
+            </div>
+          ) : (
+            <div className="applications-list">
+              {applications.map(app => (
+                <div key={app._id} className="application-card">
+                  <div className="application-header">
+                    <div className="applicant-info">
+                      <h3>{app.name}</h3>
+                      <span className={`application-status ${app.status}`}>
+                        {app.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="application-date">
+                      Applied: {new Date(app.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+
+                  <div className="application-details">
+                    <div className="detail-row">
+                      <span className="detail-label">📞 Contact:</span>
+                      <span className="detail-value">{app.mobile}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">✉️ Email:</span>
+                      <span className="detail-value">{app.email}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">📚 Qualification:</span>
+                      <span className="detail-value">{app.qualification}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">🛕 Puja Types:</span>
+                      <span className="detail-value">{app.pujaTypes}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">⭐ Experience:</span>
+                      <span className="detail-value">{app.experience} years</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">🆔 Aadhar:</span>
+                      <span className="detail-value">******{app.aadhar.slice(-4)}</span>
+                    </div>
+                    {app.adminNotes && (
+                      <div className="detail-row">
+                        <span className="detail-label">📝 Admin Notes:</span>
+                        <span className="detail-value">{app.adminNotes}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="application-actions">
+                    <button
+                      onClick={() => setSelectedApplication(app)}
+                      className="btn-view"
+                    >
+                      View Full Details
+                    </button>
+
+                    {app.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => approveApplication(app._id)}
+                          className="btn-approve"
+                          disabled={processingApplication}
+                        >
+                          <FontAwesomeIcon icon={faCheck} /> Approve
+                        </button>
+                        <button
+                          onClick={() => rejectApplication(app._id)}
+                          className="btn-reject"
+                          disabled={processingApplication}
+                        >
+                          <FontAwesomeIcon icon={faTimes} /> Reject
+                        </button>
+                      </>
+                    )}
+
+                    {app.status !== 'pending' && (
+                      <button
+                        onClick={() => deleteApplication(app._id)}
+                        className="btn-delete"
+                      >
+                        <FontAwesomeIcon icon={faTrash} /> Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          
+
+          {/* Application Details Modal */}
+          {selectedApplication && (
+            <div className="modal-overlay" onClick={() => setSelectedApplication(null)}>
+              <div className="modal-content application-modal" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>Application Details</h3>
+                  <button className="close-btn" onClick={() => setSelectedApplication(null)}>✕</button>
+                </div>
+
+                <div className="modal-body">
+                  <div className="detail-section">
+                    <h4>Personal Information</h4>
+                    <div className="detail-row">
+                      <strong>Full Name:</strong> {selectedApplication.name}
+                    </div>
+                    <div className="detail-row">
+                      <strong>Mobile Number:</strong> {selectedApplication.mobile}
+                    </div>
+                    <div className="detail-row">
+                      <strong>Email:</strong> {selectedApplication.email}
+                    </div>
+                    <div className="detail-row">
+                      <strong>Aadhar Number:</strong> {selectedApplication.aadhar}
+                    </div>
+                  </div>
+
+                  <div className="detail-section">
+                    <h4>Professional Details</h4>
+                    <div className="detail-row">
+                      <strong>Qualification:</strong> {selectedApplication.qualification}
+                    </div>
+                    <div className="detail-row">
+                      <strong>Experience:</strong> {selectedApplication.experience} years
+                    </div>
+                    <div className="detail-row">
+                      <strong>Puja Types:</strong> {selectedApplication.pujaTypes}
+                    </div>
+                  </div>
+
+                  <div className="detail-section">
+                    <h4>Application Status</h4>
+                    <div className="detail-row">
+                      <strong>Status:</strong>
+                      <span className={`application-status ${selectedApplication.status}`}>
+                        {selectedApplication.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="detail-row">
+                      <strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleString()}
+                    </div>
+                    {selectedApplication.reviewedAt && (
+                      <div className="detail-row">
+                        <strong>Reviewed On:</strong> {new Date(selectedApplication.reviewedAt).toLocaleString()}
+                      </div>
+                    )}
+                    {selectedApplication.adminNotes && (
+                      <div className="detail-row">
+                        <strong>Admin Notes:</strong> {selectedApplication.adminNotes}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  {selectedApplication.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                      <button
+                        onClick={() => {
+                          approveApplication(selectedApplication._id);
+                          setSelectedApplication(null);
+                        }}
+                        className="btn-approve"
+                      >
+                        Approve Application
+                      </button>
+                      <button
+                        onClick={() => {
+                          rejectApplication(selectedApplication._id);
+                          setSelectedApplication(null);
+                        }}
+                        className="btn-reject"
+                      >
+                        Reject Application
+                      </button>
+                    </div>
+                  )}
+                  <button onClick={() => setSelectedApplication(null)} className="btn-close-modal">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
     </div>
   );
 };
 
 export default AdminPanel;
-
-
