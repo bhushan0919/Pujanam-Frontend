@@ -2,7 +2,7 @@
 export const toast = {
   success: (message) => {
     // You can integrate with toast libraries like react-toastify
-    console.log('✅', message);
+    //console.log('✅', message);
     alert(message); // Temporary - replace with proper toast
   },
   
@@ -12,7 +12,7 @@ export const toast = {
   },
   
   info: (message) => {
-    console.log('ℹ️', message);
+    //console.log('ℹ️', message);
     // Add proper toast implementation
   }
 };

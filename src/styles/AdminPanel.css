@@ -1766,3 +1766,347 @@ input[type="file"]:hover {
         min-width: auto;
     }
 }
+
+/* AdminPanel.css - Add these styles */
+.services-dropdown-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.services-select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.services-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.services-select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  font-size: 12px;
+  color: #667eea;
+}
+
+.warning-message {
+  background: #fff3cd;
+  color: #856404;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Style for disabled options in select */
+.services-select option:disabled {
+  color: #999;
+  background-color: #f5f5f5;
+}
+
+
+
+
+
+
+
+
+/* Applications Tab Styles */
+
+
+/* Fixed Application Modal Styles */
+.admin-applications-section {
+  padding: 20px;
+}
+
+.application-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: white;
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+}
+
+/* Button Styles */
+.btn-approve {
+  padding: 10px 24px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-approve:hover {
+  background-color: #218838;
+}
+
+.btn-reject {
+  padding: 10px 24px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-reject:hover {
+  background-color: #c82333;
+}
+
+.btn-close-modal {
+  padding: 10px 24px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-close-modal:hover {
+  background-color: #5a6268;
+}
+
+.admin-applications-section {
+  padding: 20px;
+}
+
+.application-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.application-filters button {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.application-filters button.active {
+  background: #667eea;
+  color: white;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.application-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.3s;
+}
+
+.application-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.applicant-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.applicant-info h3 {
+  margin: 0;
+  color: #333;
+}
+
+.application-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.application-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.application-status.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.application-status.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.application-date {
+  color: #666;
+  font-size: 12px;
+}
+
+.application-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  min-width: 100px;
+}
+
+.detail-value {
+  color: #333;
+}
+
+.application-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-approve {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-approve:hover {
+  background: #218838;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+.application-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.application-modal .detail-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.application-modal .detail-section h4 {
+  margin-bottom: 12px;
+  color: #667eea;
+}
+
+.application-modal .detail-row {
+  margin-bottom: 8px;
+}

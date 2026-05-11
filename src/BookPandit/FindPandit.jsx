@@ -2,11 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { panditApi } from "../api/panditApi";
-import LoadingSpinner from '../components/common/LoadingSpinner';
 import { analytics } from '../utils/analytics';
 import BookingForm from '../components/common/BookingForm';
 import "../styles/FindPandit.css";
-
+import Skeleton from '../components/common/Skeleton';
 
 export default function FindPandit() {
     const [search, setSearch] = useState("");
@@ -179,6 +178,17 @@ export default function FindPandit() {
     const userIsLoggedIn =
         !!localStorage.getItem("adminToken") ||
         !!localStorage.getItem("panditToken");
+
+        if (loading) {
+    return (
+      <div className="find-pandit">
+        <h1>Find Pandit</h1>
+        <Skeleton.FilterBar />
+        <Skeleton.PanditsGrid count={6} />
+        <Skeleton.Pagination />
+      </div>
+    );
+  }
 
     return (
         <div className="find-pandit">

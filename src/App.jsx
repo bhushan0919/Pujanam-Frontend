@@ -27,6 +27,17 @@ import DeleteAccount from './pages/DeleteAccount';
 import { authStorage } from './api/apiClient';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PanditForgotPassword from './components/pandit/PanditForgotPassword';
+import PanditResetPassword from './components/pandit/PanditResetPassword';
+import JoinPandit from './pages/JoinPandit';
+import AstroServices from "./pages/AstroServices";
+import KundaliTool from './components/astro/KundaliTool.jsx';
+import HoroscopeTool from './components/astro/HoroscopeTool.jsx';
+import CompatibilityTool from './components/astro/CompatibilityTool.jsx';
+import CompatibilityResult from './components/astro/CompatibilityResult.jsx';
+import HoroscopeResult from './components/astro/HoroscopeResult.jsx';
+import KundaliResult from './components/astro/KundaliResult.jsx';
+
 
 
 // Component to conditionally show Header
@@ -133,6 +144,19 @@ function App() {
               <Route path="/terms-conditions" element={<TermsConditions />} />
               <Route path="/cancellation-policy" element={<CancellationPolicy />} />
               <Route path="/delete-account" element={<DeleteAccount />} />
+              <Route path="/join-pandit" element={<JoinPandit />}/>
+              <Route path="/astro-services" element={<AstroServices />}/>
+              <Route path="/astro/kundali" element={<KundaliTool />}/>
+              <Route path="/astro/kundali/result" element={<KundaliResult />}/>
+              <Route path="/astro/horoscope" element={<HoroscopeTool />}/>
+              <Route path="/astro/horoscope/result" element={<HoroscopeResult />}/>
+              <Route path="/astro/compatibility" element={<CompatibilityTool />}/>
+              <Route path="/astro/compatibility/result" element={<CompatibilityResult />}/>
+              
+              
+
+              
+              
 
               {/* Admin Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />
@@ -152,6 +176,8 @@ function App() {
                   </SocketProvider>
                 </PanditRoute>
               } />
+              <Route path="/pandit-forgot-password" element={<PanditForgotPassword />} />
+              <Route path="/pandit-reset-password" element={<PanditResetPassword />} />
 
               <Route path="/user/dashboard" element={
                 <ProtectedRoute role="user">

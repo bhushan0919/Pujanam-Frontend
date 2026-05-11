@@ -6,7 +6,7 @@ import { bookingApi } from '../../api/bookingApi';
 import { authStorage } from '../../api/apiClient';
 import '../../styles/PanditDashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faBell, faBook, faBullhorn, faCalendar, faSyncAlt, faCheck, faCircleCheck, faIndianRupeeSign, faMobileScreen, faStar, faX, faPhone, faPencil, faMicrophone, faForwardFast, faNoteSticky, faEnvelope, faLocation, faAddressCard, faInr, faComment, faClockFour } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBell, faBook, faBullhorn, faChevronDown, faChevronUp, faCalendar, faSyncAlt, faUser, faCheck, faCircleCheck, faIndianRupeeSign, faMobileScreen, faStar, faX, faPhone, faPencil, faMicrophone, faForwardFast, faNoteSticky, faEnvelope, faLocation, faAddressCard, faInr, faComment, faClockFour } from "@fortawesome/free-solid-svg-icons";
 import { useSocket } from '../../context/SocketContext';
 import { useCallback } from 'react';
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
@@ -26,14 +26,11 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     return savedStatus ? JSON.parse(savedStatus) : (pandit?.isOnline || false);
   });
   const [error, setError] = useState('');
-
-  // NEW STATE FOR DETAIL VIEWS
-  const [detailedView, setDetailedView] = useState(null); // 'todayBookings', 'earnings', 'completed', 'ratings'
+  const [detailedView, setDetailedView] = useState(null);
   const [detailedData, setDetailedData] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
-  // verification code generation
   const [showCodeModal, setShowCodeModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);// Add this state
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [codeGenerated, setCodeGenerated] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [enteredCode, setEnteredCode] = useState('');
@@ -46,17 +43,31 @@ const PanditDashboard = ({ pandit, onLogout }) => {
   const [selectedBookingForWA, setSelectedBookingForWA] = useState(null);
   const [samagriItems, setSamagriItems] = useState([]);
   const [newSamagriItem, setNewSamagriItem] = useState('');
-  const [samagriOption, setSamagriOption] = useState('pandit_brings'); // pandit_brings or user_brings
+  const [samagriOption, setSamagriOption] = useState('pandit_brings');
   const [additionalInstructions, setAdditionalInstructions] = useState('');
   const [customTiming, setCustomTiming] = useState('');
-  // Add this state with other states
   const [customTime, setCustomTime] = useState('');
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
-
-
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    username: pandit?.username || '',
+    contact: pandit?.contact || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(pandit?.image || '/images/icon.png');
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [astroConsultations, setAstroConsultations] = useState([]);
+  const [loadingAstro, setLoadingAstro] = useState(false);
+  const [selectedConsultation, setSelectedConsultation] = useState(null);
+  const [activeAstroTab, setActiveAstroTab] = useState('pending');
+  const [consultationNotes, setConsultationNotes] = useState('');
 
 
   const loadDashboardData = useCallback(async () => {
@@ -98,6 +109,150 @@ const PanditDashboard = ({ pandit, onLogout }) => {
     } catch (error) {
       console.error('❌ Error loading bookings:', error);
       setBookings([]); // Set empty array on error
+    }
+  };
+  // Open profile edit modal
+  const openProfileModal = () => {
+    setProfileData({
+      username: pandit?.username || '',
+      contact: pandit?.contact || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setProfileImagePreview(pandit?.image || '/images/icon.png');
+    setProfileImage(null);
+    setShowProfileModal(true);
+  };
+
+  // Handle profile image change
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      setProfileImage(file);
+      setProfileImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  // Update profile with password toggle validation
+  const updateProfile = async () => {
+    // Basic validation
+    if (profileData.username.trim() !== pandit?.username) {
+      // Show a warning that username change will be checked
+      const confirmChange = confirm('Changing your username. Make sure the new username is not taken by another pandit.');
+      if (!confirmChange) {
+        return;
+      }
+    }
+
+    if (!profileData.contact.trim()) {
+      alert('❌ Contact number is required');
+      return;
+    }
+
+    // Validate Indian mobile number format
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(profileData.contact)) {
+      alert('❌ Please enter a valid 10-digit Indian mobile number (starting with 6,7,8, or 9)');
+      return;
+    }
+
+    // Only validate password fields if they are shown AND user entered something
+    if (showPasswordFields) {
+      // Check if user started filling password fields
+      const hasPasswordInput = profileData.currentPassword || profileData.newPassword || profileData.confirmPassword;
+
+      if (hasPasswordInput) {
+        // Validate current password is entered
+        if (!profileData.currentPassword) {
+          alert('❌ Please enter your current password');
+          return;
+        }
+
+        // Validate new password
+        if (!profileData.newPassword) {
+          alert('❌ Please enter a new password');
+          return;
+        }
+
+        if (profileData.newPassword.length < 6) {
+          alert('❌ New password must be at least 6 characters');
+          return;
+        }
+
+        if (profileData.newPassword !== profileData.confirmPassword) {
+          alert('❌ New passwords do not match');
+          return;
+        }
+      }
+    }
+
+    setUpdatingProfile(true);
+
+    try {
+      const { token } = authStorage.getAuth('pandit');
+      const formData = new FormData();
+
+      // Add text fields
+      formData.append('username', profileData.username);
+      formData.append('contact', profileData.contact);
+
+      // Only send password data if user explicitly wants to change password
+      if (showPasswordFields && profileData.newPassword) {
+        formData.append('currentPassword', profileData.currentPassword);
+        formData.append('newPassword', profileData.newPassword);
+      }
+
+      // Add image if changed
+      if (profileImage) {
+        formData.append('panditImage', profileImage);
+      }
+
+      const response = await fetch(buildUrl('/pandit/profile'), {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Profile updated successfully!');
+
+        const updatedPandit = data.pandit;
+        setPandit(updatedPandit);
+
+        const { token: currentToken } = authStorage.getAuth('pandit');
+        authStorage.saveAuth('pandit', currentToken, updatedPandit);
+
+        // Reset password fields and toggle
+        setProfileData({
+          ...profileData,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        setShowPasswordFields(false);
+        setShowProfileModal(false);
+        loadDashboardData();
+      } else {
+        alert('❌ ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('❌ Error updating profile. Please try again.');
+    } finally {
+      setUpdatingProfile(false);
     }
   };
 
@@ -1112,6 +1267,113 @@ ${samagriText}
     }
   };
 
+  // Load astrology consultations
+  const loadAstroConsultations = async () => {
+    try {
+      setLoadingAstro(true);
+      const { token } = authStorage.getAuth('pandit');
+
+      const response = await fetch(buildUrl(`/astro-consultation/pandit/consultations?status=${activeAstroTab}`), {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAstroConsultations(data.consultations || []);
+      }
+    } catch (error) {
+      console.error('Error loading astrology consultations:', error);
+    } finally {
+      setLoadingAstro(false);
+    }
+  };
+
+  // Accept astrology consultation
+  const acceptAstroConsultation = async (consultationId) => {
+    try {
+      const { token } = authStorage.getAuth('pandit');
+
+      const response = await fetch(buildUrl(`/astro-consultation/pandit/consultations/${consultationId}/accept`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Consultation accepted successfully!');
+        loadAstroConsultations();
+        setSelectedConsultation(null);
+      } else {
+        alert('❌ ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error accepting consultation:', error);
+      alert('Error accepting consultation');
+    }
+  };
+
+  // Complete astrology consultation
+  const completeAstroConsultation = async (consultationId) => {
+    const notes = prompt('Enter consultation notes/summary:', consultationNotes);
+    if (notes === null) return;
+
+    try {
+      const { token } = authStorage.getAuth('pandit');
+
+      const response = await fetch(buildUrl(`/astro-consultation/pandit/consultations/${consultationId}/complete`), {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ consultationNotes: notes })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Consultation marked as completed!');
+        loadAstroConsultations();
+        setSelectedConsultation(null);
+      } else {
+        alert('❌ ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error completing consultation:', error);
+      alert('Error completing consultation');
+    }
+  };
+
+  // Listen for socket events for new consultations
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewAstroConsultation = (data) => {
+      console.log('📡 New astrology consultation:', data);
+      loadAstroConsultations();
+      // Show notification
+      alert(`🔔 New astrology consultation request: ${data.message}`);
+    };
+
+    socket.on('new_astro_consultation', handleNewAstroConsultation);
+
+    return () => {
+      socket.off('new_astro_consultation', handleNewAstroConsultation);
+    };
+  }, [socket]);
+
+  // Load consultations when tab changes
+  useEffect(() => {
+    if (activeTab === 'astro-consultations') {
+      loadAstroConsultations();
+    }
+  }, [activeTab, activeAstroTab]);
+
   // loading state
   if (loading && !dashboardData) {
     return (
@@ -1138,11 +1400,21 @@ ${samagriText}
           }}
           className="btn-skip"
         >
-          <FontAwesomeIcon icon={faForwardFast } /> Skip loading & use demo data
+          <FontAwesomeIcon icon={faForwardFast} /> Skip loading & use demo data
         </button>
       </div>
     );
   }
+
+  
+
+  // Add new tab button
+  <button
+    className={activeTab === 'astro-consultations' ? 'active' : ''}
+    onClick={() => setActiveTab('astro-consultations')}
+  >
+    <FontAwesomeIcon icon={faStar} /> Astro Consultations
+  </button>
 
   return (
     <div className="pandit-dashboard">
@@ -1260,6 +1532,9 @@ ${samagriText}
         </div>
 
         <div className="header-right">
+          <button onClick={openProfileModal} className="edit-profile-btn">
+            <FontAwesomeIcon icon={faUser} /> Edit Profile
+          </button>
           <button
             onClick={refreshAllData}
             className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
@@ -1282,8 +1557,119 @@ ${samagriText}
           <button onClick={handleLogout} className="logout-btn"><FontAwesomeIcon icon={faArrowRight} /> Logout</button>
         </div>
       </div>
+      {/* Profile Edit Modal with Password Toggle */}
+      {showProfileModal && (
+        <div className="modal-overlay" onClick={() => setShowProfileModal(false)}>
+          <div className="modal-content profile-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3><FontAwesomeIcon icon={faUser} /> Edit Profile</h3>
+              <button className="close-btn" onClick={() => setShowProfileModal(false)}>✕</button>
+            </div>
 
+            <div className="modal-body">
+              {/* Profile Image */}
+              <div className="profile-image-section">
+                <div className="avatar-upload">
+                  <img
+                    src={profileImagePreview}
+                    alt="Profile"
+                    className="profile-preview"
+                    onError={(e) => { e.target.src = '/images/icon.png'; }}
+                  />
+                  <label className="upload-btn">
+                    <FontAwesomeIcon icon={faPencil} />
+                    <input type="file" accept="image/*" onChange={handleProfileImageChange} hidden />
+                  </label>
+                </div>
+                <p className="upload-hint">Click the pencil to change photo</p>
+              </div>
 
+              {/* Username */}
+              <div className="form-group">
+                <label>Username</label>
+                <input
+                  type="text"
+                  value={profileData.username}
+                  onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
+                  placeholder="Enter username"
+                />
+              </div>
+
+              {/* Contact Number */}
+              <div className="form-group">
+                <label>Contact Number</label>
+                <input
+                  type="tel"
+                  value={profileData.contact}
+                  onChange={(e) => setProfileData({ ...profileData, contact: e.target.value })}
+                  placeholder="10-digit mobile number"
+                  maxLength="10"
+                />
+              </div>
+
+              {/* Change Password Toggle Button */}
+              <div className="password-toggle-section">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordFields(!showPasswordFields)}
+                  className="toggle-password-btn"
+                >
+                  <FontAwesomeIcon icon={showPasswordFields ? faChevronUp : faChevronDown} />
+                  {showPasswordFields ? ' Cancel Password Change' : ' Change Password'}
+                </button>
+              </div>
+
+              {/* Password Fields - Only show when toggled */}
+              {showPasswordFields && (
+                <div className="password-section">
+                  <div className="form-group">
+                    <label>Current Password <span className="required">*</span></label>
+                    <input
+                      type="password"
+                      value={profileData.currentPassword}
+                      onChange={(e) => setProfileData({ ...profileData, currentPassword: e.target.value })}
+                      placeholder="Enter your current password"
+                      required={showPasswordFields}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>New Password <span className="required">*</span></label>
+                    <input
+                      type="password"
+                      value={profileData.newPassword}
+                      onChange={(e) => setProfileData({ ...profileData, newPassword: e.target.value })}
+                      placeholder="Min 6 characters"
+                      required={showPasswordFields}
+                    />
+                    <small className="password-hint">Password must be at least 6 characters</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Confirm New Password <span className="required">*</span></label>
+                    <input
+                      type="password"
+                      value={profileData.confirmPassword}
+                      onChange={(e) => setProfileData({ ...profileData, confirmPassword: e.target.value })}
+                      placeholder="Re-enter new password"
+                      required={showPasswordFields}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={() => setShowProfileModal(false)} className="btn-cancel">
+                Cancel
+              </button>
+              <button onClick={updateProfile} disabled={updatingProfile} className="btn-save">
+                {updatingProfile ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {/* Stats Overview - NOW CLICKABLE */}
@@ -1530,6 +1916,12 @@ ${samagriText}
         >
           <FontAwesomeIcon icon={faCalendar} /> Upcoming
         </button>
+        <button
+          className={activeTab === 'astro-consultations' ? 'active' : ''}
+          onClick={() => setActiveTab('astro-consultations')}
+        >
+          <FontAwesomeIcon icon={faStar} /> Astro Consultations
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -1610,6 +2002,189 @@ ${samagriText}
               <div className="empty-state">
                 <p>No new notifications</p>
                 <small>You will receive notifications when new bookings match your profile</small>
+              </div>
+            )}
+          </div>
+        )}
+        {/* Astrology Consultations Tab */}
+        {activeTab === 'astro-consultations' && (
+          <div className="astro-consultations-content">
+            <div className="section-header">
+              <h3><FontAwesomeIcon icon={faStar} /> Astrology Consultations</h3>
+              <div className="astro-tabs">
+                <button
+                  className={activeAstroTab === 'pending' ? 'active' : ''}
+                  onClick={() => setActiveAstroTab('pending')}
+                >
+                  Pending ({astroConsultations.filter(c => c.status === 'pending').length})
+                </button>
+                <button
+                  className={activeAstroTab === 'accepted' ? 'active' : ''}
+                  onClick={() => setActiveAstroTab('accepted')}
+                >
+                  Accepted ({astroConsultations.filter(c => c.status === 'accepted').length})
+                </button>
+                <button
+                  className={activeAstroTab === 'completed' ? 'active' : ''}
+                  onClick={() => setActiveAstroTab('completed')}
+                >
+                  Completed ({astroConsultations.filter(c => c.status === 'completed').length})
+                </button>
+              </div>
+            </div>
+
+            {loadingAstro ? (
+              <div className="loading">Loading consultations...</div>
+            ) : astroConsultations.length === 0 ? (
+              <div className="empty-state">
+                <p>No astrology consultations found</p>
+                <small>When users book astrology services, they will appear here</small>
+              </div>
+            ) : (
+              <div className="astro-consultations-list">
+                {astroConsultations.map(consultation => (
+                  <div key={consultation._id} className="astro-consultation-card">
+                    <div className="consultation-header">
+                      <div className="service-info">
+                        <span className="service-icon">✨</span>
+                        <div>
+                          <h4>{consultation.serviceName}</h4>
+                          <span className={`status-badge ${consultation.status}`}>
+                            {consultation.status.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="consultation-date">
+                        Requested: {new Date(consultation.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div className="consultation-details">
+                      <div className="detail-row">
+                        <strong>👤 Customer:</strong> {consultation.userName}
+                      </div>
+                      <div className="detail-row">
+                        <strong>📞 Contact:</strong> {consultation.userPhone}
+                      </div>
+                      <div className="detail-row">
+                        <strong>✉️ Email:</strong> {consultation.userEmail}
+                      </div>
+                      {consultation.preferredTime && (
+                        <div className="detail-row">
+                          <strong>⏰ Preferred Time:</strong> {consultation.preferredTime}
+                        </div>
+                      )}
+                      {consultation.birthDetails && (
+                        <div className="detail-row">
+                          <strong>📅 Birth Details:</strong>
+                          DOB: {consultation.birthDetails.dateOfBirth || 'N/A'}
+                          {consultation.birthDetails.timeOfBirth && `, Time: ${consultation.birthDetails.timeOfBirth}`}
+                          {consultation.birthDetails.placeOfBirth && `, Place: ${consultation.birthDetails.placeOfBirth}`}
+                        </div>
+                      )}
+                      {consultation.questions && (
+                        <div className="detail-row">
+                          <strong>❓ Questions:</strong> {consultation.questions}
+                        </div>
+                      )}
+                      <div className="detail-row">
+                        <strong>💰 Fee:</strong> ₹{consultation.paymentAmount}
+                      </div>
+                    </div>
+
+                    <div className="consultation-actions">
+                      {consultation.status === 'pending' && (
+                        <button
+                          onClick={() => acceptAstroConsultation(consultation._id)}
+                          className="btn-accept"
+                        >
+                          <FontAwesomeIcon icon={faCheck} /> Accept Consultation
+                        </button>
+                      )}
+                      {consultation.status === 'accepted' && (
+                        <button
+                          onClick={() => completeAstroConsultation(consultation._id)}
+                          className="btn-complete"
+                        >
+                          <FontAwesomeIcon icon={faCheckDouble} /> Mark Completed
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setSelectedConsultation(consultation)}
+                        className="btn-view"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Consultation Details Modal */}
+            {selectedConsultation && (
+              <div className="modal-overlay" onClick={() => setSelectedConsultation(null)}>
+                <div className="modal-content consultation-modal" onClick={e => e.stopPropagation()}>
+                  <div className="modal-header">
+                    <h3>Consultation Details</h3>
+                    <button className="close-btn" onClick={() => setSelectedConsultation(null)}>✕</button>
+                  </div>
+
+                  <div className="modal-body">
+                    <div className="detail-section">
+                      <h4>Customer Information</h4>
+                      <p><strong>Name:</strong> {selectedConsultation.userName}</p>
+                      <p><strong>Email:</strong> {selectedConsultation.userEmail}</p>
+                      <p><strong>Phone:</strong> {selectedConsultation.userPhone}</p>
+                    </div>
+
+                    <div className="detail-section">
+                      <h4>Service Details</h4>
+                      <p><strong>Service:</strong> {selectedConsultation.serviceName}</p>
+                      <p><strong>Preferred Time:</strong> {selectedConsultation.preferredTime || 'Not specified'}</p>
+                      <p><strong>Status:</strong> {selectedConsultation.status.toUpperCase()}</p>
+                      <p><strong>Fee:</strong> ₹{selectedConsultation.paymentAmount}</p>
+                    </div>
+
+                    {selectedConsultation.birthDetails && (
+                      <div className="detail-section">
+                        <h4>Birth Details</h4>
+                        <p><strong>Date of Birth:</strong> {selectedConsultation.birthDetails.dateOfBirth || 'N/A'}</p>
+                        <p><strong>Time of Birth:</strong> {selectedConsultation.birthDetails.timeOfBirth || 'N/A'}</p>
+                        <p><strong>Place of Birth:</strong> {selectedConsultation.birthDetails.placeOfBirth || 'N/A'}</p>
+                      </div>
+                    )}
+
+                    {selectedConsultation.partnerBirthDetails && (
+                      <div className="detail-section">
+                        <h4>Partner's Birth Details (Compatibility)</h4>
+                        <p><strong>Date of Birth:</strong> {selectedConsultation.partnerBirthDetails.dateOfBirth || 'N/A'}</p>
+                        <p><strong>Time of Birth:</strong> {selectedConsultation.partnerBirthDetails.timeOfBirth || 'N/A'}</p>
+                        <p><strong>Place of Birth:</strong> {selectedConsultation.partnerBirthDetails.placeOfBirth || 'N/A'}</p>
+                      </div>
+                    )}
+
+                    {selectedConsultation.questions && (
+                      <div className="detail-section">
+                        <h4>Questions</h4>
+                        <p>{selectedConsultation.questions}</p>
+                      </div>
+                    )}
+
+                    {selectedConsultation.consultationNotes && (
+                      <div className="detail-section">
+                        <h4>Consultation Notes</h4>
+                        <p>{selectedConsultation.consultationNotes}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="modal-actions">
+                    <button onClick={() => setSelectedConsultation(null)} className="btn-close-modal">
+                      Close
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -1762,7 +2337,7 @@ ${samagriText}
 
               {/* Additional Instructions */}
               <div className="instructions-section">
-                <label><strong><FontAwesomeIcon icon={faNoteSticky } /> Additional Instructions (Optional):</strong></label>
+                <label><strong><FontAwesomeIcon icon={faNoteSticky} /> Additional Instructions (Optional):</strong></label>
                 <textarea
                   rows="3"
                   value={additionalInstructions}
@@ -1897,20 +2472,20 @@ const NotificationCard = ({ notification, onAccept, setNotifications }) => {
         </h4>
 
         <div className="notification-details">
-          <p><strong><FontAwesomeIcon icon={faUser } /> Customer:</strong> {notification.customerName || 'Not provided'}</p>
-          <p><strong><FontAwesomeIcon icon={faPhone } /> Contact:</strong> {notification.customerContact || notification.contact || 'Not provided'}</p>
+          <p><strong><FontAwesomeIcon icon={faUser} /> Customer:</strong> {notification.customerName || 'Not provided'}</p>
+          <p><strong><FontAwesomeIcon icon={faPhone} /> Contact:</strong> {notification.customerContact || notification.contact || 'Not provided'}</p>
           {notification.customerEmail && notification.customerEmail !== 'N/A' && (
-            <p><strong><FontAwesomeIcon icon={faEnvelope } /> Email:</strong> {notification.customerEmail}</p>
+            <p><strong><FontAwesomeIcon icon={faEnvelope} /> Email:</strong> {notification.customerEmail}</p>
           )}
-          <p><strong><FontAwesomeIcon icon={faCalendar } /> Date & Time:</strong> {formatDateTime(notification.bookingDateTime)}</p>
-          <p><strong><FontAwesomeIcon icon={faLocation } /> Location:</strong> {notification.location || 'Not specified'}</p>
-          <p><strong><FontAwesomeIcon icon={faAddressCard } /> Address:</strong> {notification.address || 'Not provided'}</p>
-          <p><strong><FontAwesomeIcon icon={faInr } /> Price:</strong> {notification.price || notification.servicePrice || 'N/A'}</p>
+          <p><strong><FontAwesomeIcon icon={faCalendar} /> Date & Time:</strong> {formatDateTime(notification.bookingDateTime)}</p>
+          <p><strong><FontAwesomeIcon icon={faLocation} /> Location:</strong> {notification.location || 'Not specified'}</p>
+          <p><strong><FontAwesomeIcon icon={faAddressCard} /> Address:</strong> {notification.address || 'Not provided'}</p>
+          <p><strong><FontAwesomeIcon icon={faInr} /> Price:</strong> {notification.price || notification.servicePrice || 'N/A'}</p>
           {notification.message && (
-            <p><strong><FontAwesomeIcon icon={faComment } /> Message:</strong> {notification.message}</p>
+            <p><strong><FontAwesomeIcon icon={faComment} /> Message:</strong> {notification.message}</p>
           )}
           <p className="notification-time">
-            <strong><FontAwesomeIcon icon={faClockFour } /> Received:</strong> {formatDateTime(notification.createdAt)}
+            <strong><FontAwesomeIcon icon={faClockFour} /> Received:</strong> {formatDateTime(notification.createdAt)}
           </p>
         </div>
       </div>
