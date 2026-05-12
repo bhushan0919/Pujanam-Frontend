@@ -176,7 +176,7 @@ main {
     width: 100%;
     /* max-width: var(--max-width); */
     margin: 0 auto;
-    padding: var(--spacing-md);
+    /* padding: var(--spacing-md); */
     position: relative;
     z-index: 1;
 }
@@ -381,9 +381,7 @@ label {
         padding: 0 0.75rem;
     }
     
-    main {
-        padding: var(--spacing-sm);
-    }
+    
     
     .grid-cols-2,
     .grid-cols-3,
