@@ -385,13 +385,14 @@
 .mobile-login-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     padding: 13px 12px;
     text-decoration: none;
     font-weight: 500;
     font-size: 15px;
     color: var(--text-primary);
-    background: var(--background-light);
+    background: #af9a9a;
     border: 1px solid var(--border-light);
     border-radius: var(--border-radius-md);
     width: 100%;
