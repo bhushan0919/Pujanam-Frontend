@@ -97,6 +97,7 @@ export default function KundaliResult() {
     { id: 'panchang', label: '📅 Panchang' },
     { id: 'dasha', label: '⏱ Dasha' },
     { id: 'yogas', label: '✨ Yogas' },
+    { id: 'marriage', label: '💍 Marriage Yoga' },
     { id: 'doshas', label: '⚠ Doshas' },
     { id: 'scores', label: '📊 Scores' },
   ];
@@ -289,6 +290,148 @@ export default function KundaliResult() {
           <div style={{ marginTop: '16px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.1)', borderRadius: '8px', padding: '12px', color: 'rgba(212,175,55,0.5)', fontSize: '11px' }}>
             Vimshottari Dasha — 120-year cycle based on Moon's nakshatra at birth. The sequence within each Mahadasha follows the same Vimshottari order starting from the Mahadasha lord.
           </div>
+        </div>
+      )}
+
+      {activeTab === 'marriage' && (
+        <div>
+
+          <div className="kundali-result-section-title">
+            Marriage Yoga Analysis
+          </div>
+
+          <div className="kundali-result-info-grid">
+
+            <div className="kundali-result-info-card">
+              <div className="kundali-result-info-label">
+                Marriage Strength
+              </div>
+
+              <div className="kundali-result-info-value">
+                {kundali.marriage_yoga?.strength || 'N/A'}
+              </div>
+            </div>
+
+            <div className="kundali-result-info-card">
+              <div className="kundali-result-info-label">
+                Marriage Type
+              </div>
+
+              <div className="kundali-result-info-value">
+                {kundali.marriage_yoga?.marriage_type || 'N/A'}
+              </div>
+            </div>
+
+            <div className="kundali-result-info-card">
+              <div className="kundali-result-info-label">
+                Marriage Score
+              </div>
+
+              <div className="kundali-result-info-value">
+                {kundali.marriage_yoga?.score || 0}/100
+              </div>
+            </div>
+
+          </div>
+
+          <div className="kundali-result-section-title">
+            Strong Marriage Periods
+          </div>
+
+          {(kundali.marriage_yoga?.favorable_periods || []).length === 0 ? (
+
+            <div style={{
+              color: 'rgba(212,175,55,0.5)',
+              padding: '12px',
+            }}>
+              No strong periods detected.
+            </div>
+
+          ) : (
+
+            kundali.marriage_yoga.favorable_periods.map((p, i) => (
+
+              <div
+                key={i}
+                className="kundali-result-yoga-card present"
+              >
+
+                <div style={{
+                  color: '#90EE90',
+                  fontWeight: 'bold',
+                  marginBottom: '6px',
+                }}>
+                  {p.period}
+                </div>
+
+                <div style={{
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '12px',
+                }}>
+                  {p.reason}
+                </div>
+
+              </div>
+
+            ))
+          )}
+
+          <div className="kundali-result-section-title">
+            Delay Indicators
+          </div>
+
+          {(kundali.marriage_yoga?.delay_indications || []).length === 0 ? (
+
+            <div style={{
+              color: '#90EE90',
+              padding: '12px',
+            }}>
+              No major delay combinations detected.
+            </div>
+
+          ) : (
+
+            kundali.marriage_yoga.delay_indications.map((d, i) => (
+
+              <div
+                key={i}
+                className="kundali-result-dosha-card present"
+              >
+
+                <div style={{
+                  color: '#FFB366',
+                  fontSize: '12px',
+                }}>
+                  ⚠ {d}
+                </div>
+
+              </div>
+
+            ))
+          )}
+
+          <div className="kundali-result-section-title">
+            Positive Indicators
+          </div>
+
+          {(kundali.marriage_yoga?.reasons || []).map((r, i) => (
+
+            <div
+              key={i}
+              className="kundali-result-yoga-card present"
+            >
+
+              <div style={{
+                color: 'rgba(255,255,255,0.75)',
+                fontSize: '12px',
+              }}>
+                ✨ {r}
+              </div>
+
+            </div>
+
+          ))}
+
         </div>
       )}
 
