@@ -156,7 +156,7 @@ return (
         ) : (
           <div className="mobile-auth-section">
             <Link to="/user/login" className="mobile-login-btn" onClick={closeMenus}>
-              <FontAwesomeIcon icon={faUserCircle} />
+              <FontAwesomeIcon icon={faUserCircle} /> Login
             </Link>
             <button className="mobile-book-now-btn" onClick={handleBookNow}>
               <FontAwesomeIcon icon={faCalendar} /> Book Now
