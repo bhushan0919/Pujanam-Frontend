@@ -1,4 +1,4 @@
-/* ===== UserAuth.css - Combined Toggle Style ===== */
+/* ===== UserAuth.css - Fully Responsive Toggle Style ===== */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
 * {
@@ -15,7 +15,6 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: 80px 20px 20px;
-  
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -243,7 +242,7 @@ form {
   left: -250%;
   width: 300%;
   height: 100%;
-  background: linear-gradient(135deg,#aaaaa7 0%, #eb8807 100%);
+  background: linear-gradient(135deg, #aaaaa7 0%, #eb8807 100%);
   border-radius: 150px;
   z-index: 2;
   transition: 1.8s ease-in-out;
@@ -328,9 +327,7 @@ form {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
-
-/* Tablet Landscape */
+/* Base Responsive Adjustments */
 @media screen and (max-width: 900px) {
   .auth-container {
     width: 700px;
@@ -339,21 +336,8 @@ form {
     min-height: auto;
     max-height: 600px;
   }
-  
-  .form-box {
-    padding: 30px;
-  }
-  
-  .toggle-panel {
-    padding: 30px;
-  }
-  
-  .toggle-panel h1 {
-    font-size: 30px;
-  }
 }
 
-/* Medium Tablet (≤ 750px) */
 @media screen and (max-width: 750px) {
   .auth-page {
     padding: 70px 15px 15px;
@@ -368,29 +352,13 @@ form {
     max-height: none;
     border-radius: 20px;
   }
-
-  .form-box {
-    padding: 25px;
-  }
-
-  .toggle-panel {
-    padding: 25px;
-  }
-
-  .toggle-panel h1 {
-    font-size: 28px;
-  }
-
-  .auth-container h1 {
-    font-size: 30px;
-  }
 }
 
-/* Mobile Styles */
+/* ===== FULLY REWRITTEN MOBILE STYLES ===== */
 @media screen and (max-width: 650px) {
   .auth-page {
-    padding: 60px 10px 10px;
-    align-items: flex-start;
+    padding: 20px 12px;
+    align-items: center;
     min-height: 100vh;
     min-height: 100dvh;
   }
@@ -398,116 +366,214 @@ form {
   .auth-container {
     width: 100%;
     max-width: 100%;
+    min-height: 560px;
     height: auto;
-    min-height: 580px;
     aspect-ratio: auto;
     max-height: none;
-    margin: 10px;
-    border-radius: 20px;
+    margin: 0;
+    border-radius: 28px;
+    /* No fixed height, let content determine */
   }
 
+  /* Reset container active state for proper stacking */
+  .auth-container.active {
+    min-height: 600px;
+  }
+
+  /* Form Boxes - Stack Vertically */
   .form-box {
-    bottom: 0;
+    position: relative;
     width: 100%;
-    height: 65%;
-    min-height: 400px;
-    padding: 30px 20px;
-    border-radius: 20px 20px 0 0;
-    overflow-y: auto;
+    height: auto;
+    min-height: auto;
+    padding: 32px 24px;
+    right: 0 !important;
+    bottom: auto;
+    transition: none;
+    visibility: visible !important;
+    overflow-y: visible;
   }
 
-  .auth-container.active .form-box {
-    right: 0;
-    bottom: 35%;
+  /* Hide register form by default, show only login */
+  .form-box.register {
+    display: none;
+  }
+
+  /* When active, hide login and show register */
+  .auth-container.active .form-box.login {
+    display: none;
+  }
+
+  .auth-container.active .form-box.register {
+    display: flex;
+  }
+
+  /* No more slide transitions on mobile - simpler stacking */
+
+  /* Toggle Box - becomes background accent at top */
+  .toggle-box {
+    position: relative;
+    height: auto;
+    min-height: 180px;
+    background: linear-gradient(135deg, #aaaaa7 0%, #eb8807 100%);
+    border-radius: 28px 28px 24px 24px;
   }
 
   .toggle-box::before {
-    left: 0;
-    top: -270%;
-    width: 100%;
-    height: 300%;
-    border-radius: 20vw;
+    display: none; /* Remove animated pseudo-element */
   }
 
-  .auth-container.active .toggle-box::before {
-    left: 0;
-    top: 65%;
+  /* Toggle Panels - Now stacked at top */
+  .toggle-panel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 28px 20px 24px;
+    transition: none;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Hide the inactive panel */
+  .toggle-panel.toggle-right {
+    display: none;
   }
 
   .auth-container.active .toggle-panel.toggle-left {
-    left: 0;
-    top: -35%;
-  }
-
-  .toggle-panel {
-    width: 100%;
-    height: 35%;
-    min-height: 200px;
-    padding: 20px;
-  }
-
-  .toggle-panel.toggle-left {
-    top: 0;
-  }
-
-  .toggle-panel.toggle-right {
-    right: 0;
-    bottom: -35%;
+    display: none;
   }
 
   .auth-container.active .toggle-panel.toggle-right {
-    bottom: 0;
+    display: flex;
   }
 
+  /* Reset positioning for mobile panels */
+  .toggle-panel.toggle-left,
+  .toggle-panel.toggle-right,
+  .auth-container.active .toggle-panel.toggle-left,
+  .auth-container.active .toggle-panel.toggle-right {
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+  }
+
+  /* Adjust typography for mobile */
   .toggle-panel h1 {
     font-size: 28px;
+    margin-bottom: 8px;
   }
 
   .toggle-panel p {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+    font-size: 14px;
   }
 
   .toggle-panel .btn {
-    width: 140px;
-    height: 42px;
+    width: 150px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Form adjustments */
+  .form-box h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
   }
 
   .input-box {
-    margin: 20px 0;
-  }
-}
-
-/* Small Mobile */
-@media screen and (max-width: 400px) {
-  .auth-page {
-    padding: 55px 5px 5px;
-  }
-
-  .auth-container {
-    margin: 5px;
-    min-height: 520px;
-  }
-
-  .form-box {
-    min-height: 370px;
-    padding: 20px 15px;
-  }
-
-  .form-box h1 {
-    font-size: 28px;
-  }
-
-  .toggle-panel h1 {
-    font-size: 24px;
+    margin: 18px 0;
   }
 
   .input-box input {
-    padding: 12px 45px 12px 15px;
+    padding: 12px 48px 12px 16px;
+    font-size: 15px;
+  }
+
+  .btn {
+    height: 48px;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  /* Add spacing between sections */
+  .auth-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Ensure content doesn't overflow */
+  .form-box,
+  .toggle-panel {
+    flex-shrink: 0;
+  }
+
+  /* Improve social icons spacing */
+  .social-icons {
+    margin-top: 8px;
+    gap: 20px;
+  }
+
+  .social-icons a {
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
+  }
+}
+
+/* Small Mobile Devices */
+@media screen and (max-width: 450px) {
+  .auth-page {
+    padding: 16px 10px;
+  }
+
+  .auth-container {
+    min-height: 520px;
+    border-radius: 24px;
+  }
+
+  .toggle-box {
+    min-height: 160px;
+  }
+
+  .toggle-panel {
+    padding: 22px 16px 20px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 26px;
+  }
+
+  .toggle-panel p {
+    font-size: 13px;
+  }
+
+  .toggle-panel .btn {
+    width: 130px;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .form-box {
+    padding: 24px 18px;
+  }
+
+  .form-box h1 {
+    font-size: 26px;
+  }
+
+  .input-box {
+    margin: 15px 0;
+  }
+
+  .input-box input {
+    padding: 11px 44px 11px 14px;
     font-size: 14px;
   }
 
   .input-box i {
-    right: 15px;
+    right: 16px;
     font-size: 18px;
   }
 
@@ -516,105 +582,185 @@ form {
     font-size: 14px;
   }
 
+  .forgot-link a {
+    font-size: 13px;
+  }
+
   .social-icons a {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     font-size: 20px;
   }
-
-  .toggle-panel .btn {
-    width: 130px;
-    height: 40px;
-  }
 }
 
-/* Short screens — landscape phones / small tablets */
-@media screen and (max-height: 600px) and (min-width: 651px) {
+/* Extra Small / Compact Phones */
+@media screen and (max-width: 360px) {
   .auth-page {
-    padding-top: 60px;
-    align-items: flex-start;
+    padding: 12px 8px;
   }
 
   .auth-container {
-    aspect-ratio: auto;
-    height: auto;
-    min-height: 480px;
-    max-height: 95vh;
-    margin: 10px auto;
+    min-height: 500px;
+    border-radius: 20px;
   }
 
-  .form-box {
-    overflow-y: auto;
-  }
-
-  .input-box {
-    margin: 14px 0;
-  }
-
-  .toggle-panel h1 {
-    font-size: 26px;
-  }
-
-  .toggle-panel p {
-    margin-bottom: 10px;
-  }
-}
-
-/* Height-based adjustments for medium screens */
-@media screen and (max-height: 700px) and (min-width: 651px) {
-  .auth-container {
-    aspect-ratio: auto;
-    height: 580px;
-    min-height: auto;
-    max-height: 580px;
-  }
-
-  .input-box {
-    margin: 18px 0;
-  }
-
-  .toggle-panel h1 {
-    font-size: 30px;
-  }
-}
-
-/* Very short landscape */
-@media screen and (max-height: 500px) {
-  .auth-page {
-    padding-top: 50px;
-    align-items: flex-start;
-    min-height: auto;
-    height: auto;
-  }
-
-  .auth-container {
-    min-height: 400px;
-    height: auto;
-    max-height: none;
-    margin: 5px auto;
-    border-radius: 15px;
-  }
-
-  .form-box {
-    padding: 15px 20px;
-    min-height: auto;
-  }
-
-  .input-box {
-    margin: 10px 0;
+  .toggle-box {
+    min-height: 140px;
   }
 
   .toggle-panel {
-    padding: 15px;
+    padding: 18px 14px 16px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 24px;
+  }
+
+  .toggle-panel p {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .toggle-panel .btn {
+    width: 120px;
+    height: 38px;
+    font-size: 12px;
+  }
+
+  .form-box {
+    padding: 20px 14px;
+  }
+
+  .form-box h1 {
+    font-size: 24px;
+  }
+
+  .input-box {
+    margin: 12px 0;
+  }
+
+  .input-box input {
+    padding: 10px 40px 10px 12px;
+    font-size: 13px;
+  }
+
+  .btn {
+    height: 42px;
+    font-size: 13px;
+  }
+}
+
+/* Landscape Mode on Mobile */
+@media screen and (max-width: 750px) and (orientation: landscape) {
+  .auth-page {
+    padding: 12px;
+    align-items: center;
+  }
+
+  .auth-container {
+    min-height: auto;
+    max-width: 500px;
+  }
+
+  .toggle-box {
+    min-height: 130px;
+  }
+
+  .toggle-panel {
+    padding: 16px;
   }
 
   .toggle-panel h1 {
     font-size: 22px;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
 
   .toggle-panel p {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+
+  .form-box {
+    padding: 20px;
+  }
+
+  .input-box {
+    margin: 12px 0;
+  }
+
+  .social-icons {
+    margin-top: 4px;
+  }
+
+  /* Shorter height adjustment */
+  .form-box,
+  .toggle-panel {
+    overflow-y: auto;
+    max-height: 70vh;
+  }
+}
+
+/* Height-specific adjustments for very short screens */
+@media screen and (max-height: 580px) and (max-width: 650px) {
+  .auth-page {
+    padding: 10px;
+  }
+
+  .toggle-box {
+    min-height: 120px;
+  }
+
+  .toggle-panel {
+    padding: 12px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 20px;
+  }
+
+  .form-box {
+    padding: 16px;
+  }
+
+  .input-box {
+    margin: 8px 0;
+  }
+
+  .btn {
+    margin-top: 4px;
+    height: 38px;
+  }
+
+  .social-icons {
+    gap: 12px;
+    margin-top: 8px;
+  }
+}
+
+/* Tablet Landscape (651px - 900px) */
+@media screen and (min-width: 651px) and (max-width: 900px) {
+  .auth-page {
+    padding: 40px 20px;
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    min-height: 540px;
+    aspect-ratio: auto;
+  }
+
+  .form-box {
+    padding: 36px 30px;
+  }
+
+  .toggle-panel {
+    padding: 36px 24px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 32px;
   }
 }
 
@@ -673,14 +819,15 @@ form {
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+  *,
   .form-box,
   .toggle-box::before,
   .toggle-panel,
   .btn,
   .input-box input,
   .social-icons a {
-    transition: none;
-    animation: none;
+    transition: none !important;
+    animation: none !important;
   }
 }
 
@@ -732,7 +879,7 @@ form {
 }
 
 /* ============================================
-   FORGOT PASSWORD PAGE STYLES
+   FORGOT PASSWORD PAGE STYLES (Mobile Optimized)
    ============================================ */
 
 /* Steps Indicator */
@@ -794,6 +941,22 @@ form {
   color: #999;
 }
 
+@media (max-width: 480px) {
+  .step span {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+  
+  .step {
+    font-size: 10px;
+  }
+  
+  .steps-indicator::before {
+    top: 17px;
+  }
+}
+
 /* Auth Success Message */
 .auth-success {
   background: #d4edda;
@@ -838,12 +1001,7 @@ form {
   transition: color 0.3s;
 }
 
-.forgot-password-link a:hover {
-  color: #5a67d8;
-  text-decoration: underline;
-}
-
-/* Reset Code Input - Special Styling */
+/* Reset Code Input */
 input[type="text"][maxlength="6"] {
   font-size: 24px;
   text-align: center;
@@ -852,34 +1010,19 @@ input[type="text"][maxlength="6"] {
   font-weight: bold;
 }
 
-/* Small Helper Text */
+@media (max-width: 480px) {
+  input[type="text"][maxlength="6"] {
+    font-size: 18px;
+    letter-spacing: 6px;
+  }
+}
+
+/* Form Group */
 .form-group small {
   display: block;
   margin-top: 5px;
   color: #666;
   font-size: 12px;
-}
-
-/* Responsive Design for Forgot Password */
-@media (max-width: 480px) {
-  .step span {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-  }
-  
-  .step {
-    font-size: 10px;
-  }
-  
-  .steps-indicator::before {
-    top: 16px;
-  }
-  
-  input[type="text"][maxlength="6"] {
-    font-size: 18px;
-    letter-spacing: 4px;
-  }
 }
 
 /* Verification Code Container */
@@ -897,16 +1040,24 @@ input[type="text"][maxlength="6"] {
 }
 
 .verification-code {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: bold;
-  letter-spacing: 12px;
+  letter-spacing: 10px;
   color: #4CAF50;
   font-family: monospace;
   background: white;
-  padding: 15px;
+  padding: 12px;
   border-radius: 8px;
   display: inline-block;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 480px) {
+  .verification-code {
+    font-size: 28px;
+    letter-spacing: 6px;
+    padding: 8px;
+  }
 }
 
 .code-expiry {
@@ -915,7 +1066,7 @@ input[type="text"][maxlength="6"] {
   margin-top: 10px;
 }
 
-/* Resend Code Button */
+/* Resend Button */
 .resend-btn {
   background: none;
   border: none;
@@ -924,10 +1075,6 @@ input[type="text"][maxlength="6"] {
   font-size: 14px;
   margin-top: 15px;
   text-decoration: underline;
-}
-
-.resend-btn:hover:not(:disabled) {
-  color: #5a67d8;
 }
 
 .resend-btn:disabled {
@@ -943,7 +1090,7 @@ input[type="text"][maxlength="6"] {
   margin-top: 8px;
 }
 
-/* Loading Overlay for Forgot Password */
+/* Loading Overlay */
 .loading-overlay {
   position: absolute;
   top: 0;
@@ -958,7 +1105,7 @@ input[type="text"][maxlength="6"] {
   z-index: 10;
 }
 
-/* Password Strength Indicator (Optional) */
+/* Password Strength Indicator */
 .password-strength {
   height: 4px;
   border-radius: 2px;
