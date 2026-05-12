@@ -110,29 +110,44 @@ export default function CompatibilityTool() {
     setError('');
 
     try {
-      setLoading(true);
-      const payload = {
-        boy: transformPayload(form.boy),
-        girl: transformPayload(form.girl),
-      };
+  setLoading(true);
 
-      const res = await axios.post(
-         buildUrl('/astro/compatibility'),
-        payload
-      );
+  const payload = {
+    boy: transformPayload(form.boy),
+    girl: transformPayload(form.girl),
+  };
 
-      navigate('/astro/compatibility/result', {
-        state: {
-          result: res.data.compatibility,
-          form,
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Compatibility calculation failed');
-    } finally {
-      setLoading(false);
+  const token = localStorage.getItem('userToken');
+
+  console.log('TOKEN:', token);
+
+  const res = await axios.post(
+    buildUrl('/astro/compatibility'),
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
+  );
+
+  navigate('/astro/compatibility/result', {
+    state: {
+      result: res.data.compatibility,
+      form,
+    },
+  });
+
+} catch (err) {
+  console.error(err);
+
+  setError(
+    err.response?.data?.message ||
+    'Compatibility calculation failed'
+  );
+} finally {
+  setLoading(false);
+}
   }
 
   function renderPartnerForm(
